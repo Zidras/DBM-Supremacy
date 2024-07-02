@@ -5,7 +5,8 @@ local CL = DBM_CORE_L
 
 L.MainFrame 						= CL.DEADLY_BOSS_MODS -- NO TRANSLATE
 
-L.DBMWarmane						= CL.DBM .. "-Warmane by Zidras"
+L.DBMServer							= CL.DBM .. "-Supremacy"
+L.DBMWarmane						= L.DBMServer .. " por Zidras"
 L.TranslationByPrefix				= "Retail backport by "
 L.TranslationBy						= "Barsoom, Bunny67, Zidras"
 L.Website							= "Visit us on discord at |cFF73C2FBhttps://discord.gg/CyVWDWS|r"

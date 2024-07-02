@@ -5,7 +5,7 @@ labels: [bug]
 body:
 - type: checkboxes
   attributes:
-    label: Are you using the latest DBM version in a Warmane 3.3.5a realm (Icecrown, Lordaeron or Frostmourne)?
+    label: Are you using the latest DBM version in Supremacy server?
     options:
     - label: "Yes"
       required: true
