@@ -5,7 +5,7 @@ local L
 -------------------
 --  Anub'Rekhan  --
 -------------------
-L = DBM:GetModLocalization("Anub'Rekhan")
+L = DBM:GetModLocalization("Anub'Rekhan-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Ануб'Рекан"
@@ -24,7 +24,7 @@ L:SetMiscLocalization({
 ----------------------------
 --  Grand Widow Faerlina  --
 ----------------------------
-L = DBM:GetModLocalization("Faerlina")
+L = DBM:GetModLocalization("Faerlina-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Великая вдова Фарлина"
@@ -41,7 +41,7 @@ L:SetOptionLocalization({
 ---------------
 --  Maexxna  --
 ---------------
-L = DBM:GetModLocalization("Maexxna")
+L = DBM:GetModLocalization("Maexxna-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Мексна"
@@ -69,7 +69,7 @@ L:SetMiscLocalization({
 ------------------------------
 --  Noth the Plaguebringer  --
 ------------------------------
-L = DBM:GetModLocalization("Noth")
+L = DBM:GetModLocalization("Noth-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Нот Чумной"
@@ -101,7 +101,7 @@ L:SetMiscLocalization({
 --------------------------
 --  Heigan the Unclean  --
 --------------------------
-L = DBM:GetModLocalization("Heigan")
+L = DBM:GetModLocalization("Heigan-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Хейган Нечестивый"
@@ -129,7 +129,7 @@ L:SetMiscLocalization({
 ---------------
 --  Loatheb  --
 ---------------
-L = DBM:GetModLocalization("Loatheb")
+L = DBM:GetModLocalization("Loatheb-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Лотхиб"
@@ -152,7 +152,7 @@ L:SetOptionLocalization({
 -----------------
 --  Patchwerk  --
 -----------------
-L = DBM:GetModLocalization("Patchwerk")
+L = DBM:GetModLocalization("Patchwerk-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Лоскутик"
@@ -171,7 +171,7 @@ L:SetMiscLocalization({
 -----------------
 --  Grobbulus  --
 -----------------
-L = DBM:GetModLocalization("Grobbulus")
+L = DBM:GetModLocalization("Grobbulus-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Гроббулус"
@@ -180,7 +180,7 @@ L:SetGeneralLocalization({
 -------------
 --  Gluth  --
 -------------
-L = DBM:GetModLocalization("Gluth")
+L = DBM:GetModLocalization("Gluth-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Глут"
@@ -189,7 +189,7 @@ L:SetGeneralLocalization({
 ----------------
 --  Thaddius  --
 ----------------
-L = DBM:GetModLocalization("Thaddius")
+L = DBM:GetModLocalization("Thaddius-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Таддиус"
@@ -221,7 +221,7 @@ L:SetMiscLocalization({
 ----------------------------
 --  Instructor Razuvious  --
 ----------------------------
-L = DBM:GetModLocalization("Razuvious")
+L = DBM:GetModLocalization("Razuvious-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Инструктор Разувий"
@@ -245,7 +245,7 @@ L:SetMiscLocalization({
 ----------------------------
 --  Gothik the Harvester  --
 ----------------------------
-L = DBM:GetModLocalization("Gothik")
+L = DBM:GetModLocalization("Gothik-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Готик Жнец"
@@ -286,7 +286,7 @@ L:SetMiscLocalization({
 ---------------------
 --  Four Horsemen  --
 ---------------------
-L = DBM:GetModLocalization("Horsemen")
+L = DBM:GetModLocalization("Horsemen-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Четыре Всадника"
@@ -312,7 +312,7 @@ L:SetMiscLocalization({
 -----------------
 --  Sapphiron  --
 -----------------
-L = DBM:GetModLocalization("Sapphiron")
+L = DBM:GetModLocalization("Sapphiron-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Сапфирон"
@@ -352,7 +352,7 @@ L:SetMiscLocalization({
 ------------------
 --  Kel'Thuzad  --
 ------------------
-L = DBM:GetModLocalization("Kel'Thuzad")
+L = DBM:GetModLocalization("Kel'Thuzad-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Кел'Тузад"
@@ -360,7 +360,8 @@ L:SetGeneralLocalization({
 
 L:SetWarningLocalization({
 	specwarnP2Soon	= "Кел'Тузад вступает в бой через 10 секунд",
-	warnAddsSoon	= "Скоро прибытие Стражей Ледяной Короны"
+	warnAddsSoon	= "Скоро прибытие Стражей Ледяной Короны",
+	WeaponsStatus	= "Cнятие оружий включено: %s (%s - %s)"
 })
 
 L:SetTimerLocalization({
@@ -371,8 +372,9 @@ L:SetOptionLocalization({
 	TimerPhase2			= "Отсчет времени до фазы 2",
 	specwarnP2Soon		= "Спец-предупреждение за 10 секунд до вступления Кел'Тузада в бой",
 	warnAddsSoon		= "Предупреждать заранее о Стражах Ледяной Короны",
+	WeaponsStatus		= "Спец-предупреждение в начале боя если включена функция снятия/надевания оружий",
 	EqUneqWeaponsKT		= "Снимать/надевать оружия перед/после контроля по таймеру. Для надевания создайте компл. экип. \"pve\". Для снятия не нужен.",
-	EqUneqWeaponsKT2	= "Снимать/надевать оружия когда контроль кастуется в вас.",
+	EqUneqWeaponsKT2	= "Снимать/надевать оружия когда контроль кастуется в вас. Для надевания создайте компл. экип. \"pve\". Для снятия не нужен.",
 	RemoveBuffsOnMC		= "Снимать баффы, когда на вас наложено заклинание $spell:28410. Каждый вариант является кумулятивным.",
 	Gift				= "Снять $spell:48469 / $spell:48470. Минимальный подход для предотвращения сопротивления $spell:33786.",
 	CCFree				= "+ Убрать $spell:48169 / $spell:48170. Учет сопротивлений заклинаний школы Теней.",
@@ -384,6 +386,11 @@ L:SetMiscLocalization({
 	Yell		= "Соратники, слуги, солдаты холодной тьмы! Повинуйтесь зову Кел'Тузада!",
 --	YellMC1		= "Теперь твоя душа связана с моей!",
 --	YellMC2		= "Тебе не уйти!",
+	Yell1Phase2	= "Молите о пощаде!", -- 12995
+	Yell2Phase2	= "Кричите! Кричите изо всех сил!", -- 12996
+	Yell3Phase2	= "Вы уже мертвы!", -- 12997
+	YellPhase3	= "Господин, мне нужна помощь!", -- 12998
+	YellGuardians	= "Хорошо. Воины ледяных пустошей, восстаньте! Повелеваю вам сражаться, убивать и умирать во имя своего повелителя! Не щадить никого!", -- 12994
 	setMissing	= "ВНИМАНИЕ! DBM: автоматическое снимание/надевание оружия не будет работать пока вы не создадите набор экипировки pve",
 	EqUneqLineDescription	= "Автоматическое оснащение/снятие оборудования"
 })

@@ -4,7 +4,7 @@ local L
 -------------------
 --  Anub'Rekhan  --
 -------------------
-L = DBM:GetModLocalization("Anub'Rekhan")
+L = DBM:GetModLocalization("Anub'Rekhan-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Anub'Rekhan"
@@ -23,7 +23,7 @@ L:SetMiscLocalization({
 ----------------------------
 --  Grand Widow Faerlina  --
 ----------------------------
-L = DBM:GetModLocalization("Faerlina")
+L = DBM:GetModLocalization("Faerlina-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Großwitwe Faerlina"
@@ -44,7 +44,7 @@ L:SetMiscLocalization({
 ---------------
 --  Maexxna  --
 ---------------
-L = DBM:GetModLocalization("Maexxna")
+L = DBM:GetModLocalization("Maexxna-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Maexxna"
@@ -72,7 +72,7 @@ L:SetMiscLocalization({
 ------------------------------
 --  Noth the Plaguebringer  --
 ------------------------------
-L = DBM:GetModLocalization("Noth")
+L = DBM:GetModLocalization("Noth-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Noth der Seuchenfürst"
@@ -104,7 +104,7 @@ L:SetMiscLocalization({
 --------------------------
 --  Heigan the Unclean  --
 --------------------------
-L = DBM:GetModLocalization("Heigan")
+L = DBM:GetModLocalization("Heigan-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Heigan der Unreine"
@@ -132,7 +132,7 @@ L:SetMiscLocalization({
 ---------------
 --  Loatheb  --
 ---------------
-L = DBM:GetModLocalization("Loatheb")
+L = DBM:GetModLocalization("Loatheb-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Loatheb"
@@ -155,7 +155,7 @@ L:SetOptionLocalization({
 -----------------
 --  Patchwerk  --
 -----------------
-L = DBM:GetModLocalization("Patchwerk")
+L = DBM:GetModLocalization("Patchwerk-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Flickwerk"
@@ -174,7 +174,7 @@ L:SetMiscLocalization({
 -----------------
 --  Grobbulus  --
 -----------------
-L = DBM:GetModLocalization("Grobbulus")
+L = DBM:GetModLocalization("Grobbulus-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Grobbulus"
@@ -183,7 +183,7 @@ L:SetGeneralLocalization({
 -------------
 --  Gluth  --
 -------------
-L = DBM:GetModLocalization("Gluth")
+L = DBM:GetModLocalization("Gluth-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Gluth"
@@ -192,7 +192,7 @@ L:SetGeneralLocalization({
 ----------------
 --  Thaddius  --
 ----------------
-L = DBM:GetModLocalization("Thaddius")
+L = DBM:GetModLocalization("Thaddius-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Thaddius"
@@ -224,7 +224,7 @@ L:SetMiscLocalization({
 ----------------------------
 --  Instructor Razuvious  --
 ----------------------------
-L = DBM:GetModLocalization("Razuvious")
+L = DBM:GetModLocalization("Razuvious-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Instrukteur Razuvious"
@@ -248,7 +248,7 @@ L:SetMiscLocalization({
 ----------------------------
 --  Gothik the Harvester  --
 ----------------------------
-L = DBM:GetModLocalization("Gothik")
+L = DBM:GetModLocalization("Gothik-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Gothik der Ernter"
@@ -289,7 +289,7 @@ L:SetMiscLocalization({
 ---------------------
 --  Four Horsemen  --
 ---------------------
-L = DBM:GetModLocalization("Horsemen")
+L = DBM:GetModLocalization("Horsemen-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Die vier Reiter"
@@ -315,7 +315,7 @@ L:SetMiscLocalization({
 -----------------
 --  Sapphiron  --
 -----------------
-L = DBM:GetModLocalization("Sapphiron")
+L = DBM:GetModLocalization("Sapphiron-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Saphiron"
@@ -355,7 +355,7 @@ L:SetMiscLocalization({
 ------------------
 --  Kel'Thuzad  --
 ------------------
-L = DBM:GetModLocalization("Kel'Thuzad")
+L = DBM:GetModLocalization("Kel'Thuzad-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "Kel'Thuzad"
@@ -363,7 +363,8 @@ L:SetGeneralLocalization({
 
 L:SetWarningLocalization({
 	specwarnP2Soon	= "Kel'Thuzad greift in 10 Sekunden an",
-	warnAddsSoon	= "Wächter von Eiskrone bald"
+	warnAddsSoon	= "Wächter von Eiskrone bald",
+	WeaponsStatus	= "Automatisches Entwaffnen aktiv: %s (%s - %s)"
 })
 
 L:SetTimerLocalization({
@@ -374,8 +375,9 @@ L:SetOptionLocalization({
 	TimerPhase2			= "Zeige Zeit bis Phase 2",
 	specwarnP2Soon		= "Spezialwarnung 10 Sekunden bevor Kel'Thuzad angreift",
 	warnAddsSoon		= "Zeige Vorwarnung für Wächter von Eiskrone",
+	WeaponsStatus		= "Zeige Spezialwarnung bei Kampfbeginn, wenn automatisches Be-/Entwaffnen aktiviert ist",
 	EqUneqWeaponsKT		= "Waffen vor und nach $spell:28410 automatisch aus- und ausrüsten. Benötigt Ausrüstungsset namens \"pve\"",
-	EqUneqWeaponsKT2	= "Waffen automatisch ablegen und ausrüsten, wenn $spell:28410 auf DICH gewirkt wird",
+	EqUneqWeaponsKT2	= "Waffen automatisch ablegen und ausrüsten, wenn $spell:28410 auf DICH gewirkt wird. Benötigt Ausrüstungsset namens \"pve\"",
 	RemoveBuffsOnMC		= "Entferne Buffs, wenn $spell:28410 auf dich gewirkt wird. Jede Option ist kumulativ.",
 	Gift				= "Entferne $spell:48469 / $spell:48470. Minimaler Ansatz, um $spell:33786 Resistenzen zu verhindern.",
 	CCFree				= "+ Entferne $spell:48169 / $spell:48170. Berücksichtige die Resistenzen von Zaubern der Schattenschule.",
@@ -385,6 +387,11 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	Yell = "Lakaien, Diener, Soldaten der eisigen Finsternis! Folgt dem Ruf von Kel'Thuzad!",
+	Yell1Phase2 = "Betet um Gnade!", -- 12995
+	Yell2Phase2 = "Schreiend werdet ihr diese Welt verlassen!", -- 12996
+	Yell3Phase2 = "Euer Ende ist gekommen!", -- 12997
+	YellPhase3 = "Meister, ich benötige Beistand.", -- 12998
+	YellGuardians = "Wohlan, Krieger der Eisigen Weiten, erhebt euch! Ich befehle euch für euren Meister zu kämpfen, zu töten und zu sterben! Keiner darf überleben!", -- 12994
 	setMissing	= "AUFMERKSAMKEIT! Das automatische Ausrüsten/Ausrüsten von DBM-Waffen funktioniert erst, wenn Sie ein Ausrüstungsset namens pve . erstellen",
 	EqUneqLineDescription	= "Automatisches An-/Ablegen"
 })

@@ -1,13 +1,14 @@
 local mod	= DBM:NewMod("Gothik-Vanilla", "DBM-VanillaNaxx", 4)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240701222429")
+mod:SetRevision("20240715112650")
 mod:SetCreatureID(16060)
 
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"UNIT_DIED"
+--	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
 --TODO, sync infoframe from classic era version?
@@ -18,55 +19,30 @@ local warnRiderDown		= mod:NewAnnounce("WarningRiderDown", 4)
 local warnKnightDown	= mod:NewAnnounce("WarningKnightDown", 2)
 local warnPhase2		= mod:NewPhaseAnnounce(2, 3)
 
-local timerPhase2		= mod:NewTimer(277, "TimerPhase2", 27082, nil, nil, 6)
-local timerWave			= mod:NewTimer(20, "TimerWave", 5502, nil, nil, 1)
-local timerGate			= mod:NewTimer(155, "Gate Opens", 9484)
+local timerPhase2		= mod:NewTimer(275, "TimerPhase2", 27082, nil, nil, 6)
+local timerWave			= mod:NewTimer(30, "TimerWave", 5502, nil, nil, 1)
+local timerGate			= mod:NewTimer(235, "Gate Opens", 9484)
 
 mod.vb.wave = 0
-local wavesNormal = {
-	{2, L.Trainee, timer = 20},
-	{2, L.Trainee, timer = 20},
-	{2, L.Trainee, timer = 10},
-	{1, L.Knight, timer = 10},
-	{2, L.Trainee, timer = 15},
-	{1, L.Knight, timer = 5},
-	{2, L.Trainee, timer = 20},
-	{1, L.Knight, 2, L.Trainee, timer = 10},
-	{1, L.Rider, timer = 10},
-	{2, L.Trainee, timer = 5},
-	{1, L.Knight, timer = 15},
-	{2, L.Trainee, 1, L.Rider, timer = 10},
-	{2, L.Knight, timer = 10},
-	{2, L.Trainee, timer = 10},
-	{1, L.Rider, timer = 5},
-	{1, L.Knight, timer = 5},
-	{2, L.Trainee, timer = 20},
-	{1, L.Rider, 1, L.Knight, 2, L.Trainee, timer = 15},
-	{2, L.Trainee},
-}
-
-local wavesHeroic = {
-	{3, L.Trainee, timer = 20},
-	{3, L.Trainee, timer = 20},
-	{3, L.Trainee, timer = 10},
-	{2, L.Knight, timer = 10},
-	{3, L.Trainee, timer = 15},
-	{2, L.Knight, timer = 5},
-	{3, L.Trainee, timer = 20},
-	{3, L.Trainee, 2, L.Knight, timer = 10},
-	{3, L.Trainee, timer = 10},
-	{1, L.Rider, timer = 5},
-	{3, L.Trainee, timer = 15},
-	{1, L.Rider, timer = 10},
-	{2, L.Knight, timer = 10},
-	{1, L.Rider, timer = 10},
-	{1, L.Rider, 3, L.Trainee, timer = 5},
-	{1, L.Knight, 3, L.Trainee, timer = 5},
-	{1, L.Rider, 3, L.Trainee, timer = 20},
-	{1, L.Rider, 2, L.Knight, 3, L.Trainee},
-}
-
-local waves = wavesNormal
+local waves = {					-- #0 0:45
+	{3, L.Trainee, timer = 20},	-- #1 1:15
+	{3, L.Trainee, timer = 20},	-- #2 1:35?
+	{3, L.Trainee, timer = 10}, -- #3 1:55
+	{2, L.Knight, timer = 10},	-- #4 2:05
+	{3, L.Trainee, timer = 15},	-- #5 2:15
+	{2, L.Knight, timer = 5},	-- #6 2:30
+	{3, L.Trainee, timer = 20},	-- #7 2:35
+	{3, L.Trainee, 2, L.Knight, timer = 10}, -- #8 2:55
+	{1, L.Rider, timer = 10},	-- #9 3:05
+	{3, L.Trainee, timer = 5},	-- #10 3:15
+	{2, L.Knight, timer = 15},	-- #11 3:20
+	{1, L.Rider, 3, L.Trainee, timer = 10},	-- #12 3:35
+	{2, L.Knight, timer = 10},	-- #13 3:45
+	{3, L.Trainee, timer = 10},	-- #14 3:55
+	{1, L.Rider, timer = 5},	-- #15 4:05
+	{2, L.Knight, timer = 5},	-- #16 4:10
+	{3, L.Trainee},				-- #17 4:15
+}								-- Gate Open 4:40
 
 local function StartPhase2(self)
 	self:SetStage(2)
@@ -96,27 +72,14 @@ end
 
 function mod:OnCombatStart()
 	self:SetStage(1)
-	if self:IsDifficulty("normal25") then
-		waves = wavesHeroic
-	else
-		waves = wavesNormal
-	end
 	self.vb.wave = 0
 	timerGate:Start()
 	timerPhase2:Start()
-	warnPhase2:Schedule(277)
-	timerWave:Start(25, self.vb.wave + 1)
-	warnWaveSoon:Schedule(22, self.vb.wave + 1, getWaveString(self.vb.wave + 1))
-	self:Schedule(25, NextWave, self)
-	self:Schedule(277, StartPhase2, self)
-end
-
-function mod:OnTimerRecovery()
-	if self:IsDifficulty("normal25") then
-		waves = wavesHeroic
-	else
-		waves = wavesNormal
-	end
+	warnPhase2:Schedule(275)
+	timerWave:Start(nil, self.vb.wave + 1)
+	warnWaveSoon:Schedule(27, self.vb.wave + 1, getWaveString(self.vb.wave + 1))
+	self:Schedule(30, NextWave, self)
+	self:Schedule(275, StartPhase2, self)
 end
 
 function mod:UNIT_DIED(args)
@@ -129,3 +92,9 @@ function mod:UNIT_DIED(args)
 		end
 	end
 end
+
+--[[function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
+	if spellName == GetSpellInfo(28025) and self.vb.phase == 1 then -- Teleport Left. Boss casts this teleportation spell, together with Yell: I have waited long enough. Now you face the harvester of souls.
+		self:SetStage(2)
+	end
+end]]

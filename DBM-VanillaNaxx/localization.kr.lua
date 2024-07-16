@@ -8,7 +8,7 @@ local L
 -------------------
 --  아눕레칸     --
 -------------------
-L = DBM:GetModLocalization("Anub'Rekhan")
+L = DBM:GetModLocalization("Anub'Rekhan-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "아눕레칸"
@@ -27,7 +27,7 @@ L:SetMiscLocalization({
 ---------------------
 --  귀부인 펠리나  --
 ---------------------
-L = DBM:GetModLocalization("Faerlina")
+L = DBM:GetModLocalization("Faerlina-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "귀부인 펠리나"
@@ -44,7 +44,7 @@ L:SetOptionLocalization({
 ---------------
 --  맥스나   --
 ---------------
-L = DBM:GetModLocalization("Maexxna")
+L = DBM:GetModLocalization("Maexxna-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "맥스나"
@@ -75,7 +75,7 @@ L:SetMiscLocalization({
 ---------------------
 --  역병술사 노스  --
 ---------------------
-L = DBM:GetModLocalization("Noth")
+L = DBM:GetModLocalization("Noth-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "역병술사 노스"
@@ -107,7 +107,7 @@ L:SetMiscLocalization({
 --------------------------
 --  부정의 헤이건  --
 --------------------------
-L = DBM:GetModLocalization("Heigan")
+L = DBM:GetModLocalization("Heigan-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "부정의 헤이건"
@@ -135,7 +135,7 @@ L:SetMiscLocalization({
 ----------------
 --  로데브  --
 ----------------
-L = DBM:GetModLocalization("Loatheb")
+L = DBM:GetModLocalization("Loatheb-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "로데브"
@@ -161,7 +161,7 @@ L:SetOptionLocalization({
 -----------------
 --  패치워크  --
 -----------------
-L = DBM:GetModLocalization("Patchwerk")
+L = DBM:GetModLocalization("Patchwerk-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "패치워크"
@@ -180,7 +180,7 @@ L:SetMiscLocalization({
 -----------------
 --  그라불루스  --
 -----------------
-L = DBM:GetModLocalization("Grobbulus")
+L = DBM:GetModLocalization("Grobbulus-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "그라불루스"
@@ -189,7 +189,7 @@ L:SetGeneralLocalization({
 -------------
 --  글루스  --
 -------------
-L = DBM:GetModLocalization("Gluth")
+L = DBM:GetModLocalization("Gluth-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "글루스"
@@ -198,7 +198,7 @@ L:SetGeneralLocalization({
 ----------------
 --  타디우스  --
 ----------------
-L = DBM:GetModLocalization("Thaddius")
+L = DBM:GetModLocalization("Thaddius-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "타디우스"
@@ -234,7 +234,7 @@ L:SetMiscLocalization({
 ---------------------------
 --  훈련교관 라주비어스  --
 ---------------------------
-L = DBM:GetModLocalization("Razuvious")
+L = DBM:GetModLocalization("Razuvious-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "훈련교관 라주비어스"
@@ -258,7 +258,7 @@ L:SetMiscLocalization({
 ------------------------
 --  영혼 착취자 고딕  --
 ------------------------
-L = DBM:GetModLocalization("Gothik")
+L = DBM:GetModLocalization("Gothik-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "영혼 착취자 고딕"
@@ -300,7 +300,7 @@ L:SetMiscLocalization({
 --------------------
 --  4인의 기사단  --
 --------------------
-L = DBM:GetModLocalization("Horsemen")
+L = DBM:GetModLocalization("Horsemen-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "4인의 기사단"
@@ -329,7 +329,7 @@ L:SetMiscLocalization({
 --------------
 --  사피론  --
 --------------
-L = DBM:GetModLocalization("Sapphiron")
+L = DBM:GetModLocalization("Sapphiron-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "사피론"
@@ -369,7 +369,7 @@ L:SetMiscLocalization({
 ------------------
 --  켈투자드  --
 ------------------
-L = DBM:GetModLocalization("Kel'Thuzad")
+L = DBM:GetModLocalization("Kel'Thuzad-Vanilla")
 
 L:SetGeneralLocalization({
 	name = "켈투자드"
@@ -377,7 +377,8 @@ L:SetGeneralLocalization({
 
 L:SetWarningLocalization({
 	specwarnP2Soon		= "10초 후 2 단계",
-	warnAddsSoon		= "곧 얼음왕관의 수호자"
+	warnAddsSoon		= "곧 얼음왕관의 수호자",
+	WeaponsStatus		= "Auto Unequipping enabled: %s (%s - %s)" --Needs Translating
 })
 
 L:SetTimerLocalization({
@@ -388,8 +389,9 @@ L:SetOptionLocalization({
 	TimerPhase2			= "2 단계 바 보기",
 	specwarnP2Soon		= "2 단계 10초 전에 특수 경고 보기",
 	warnAddsSoon		= "얼음왕관의 수호자 이전에 알림 보기",
+	WeaponsStatus		= "Special warning at combat start if unequip/equip function is enabled", --Needs Translating
 	EqUneqWeaponsKT		= "$spell:28410 전후에 자동으로 무기를 장착 해제하고 장착합니다. \"pve\"라는 장비 세트가 필요합니다.",
-	EqUneqWeaponsKT2	= "$spell:28410이 당신에게 시전되면 자동으로 무기를 장착 해제하고 장착합니다.",
+	EqUneqWeaponsKT2	= "$spell:28410이 당신에게 시전되면 자동으로 무기를 장착 해제하고 장착합니다. \"pve\"라는 장비 세트가 필요합니다.",
 	RemoveBuffsOnMC		= "$spell:28410를 시전하면 버프를 제거합니다. 각 옵션은 누적됩니다.",
 	Gift				= "$spell:48469 / $spell:48470을 제거합니다. $spell:33786 저항을 방지하기 위한 최소한의 접근입니다.",
 	CCFree				= "+ $spell:48169 / $spell:48170을 제거합니다. 그림자 학교의 주문 저항을 설명합니다.",
@@ -399,6 +401,11 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	Yell		= "어둠의 문지기와 하수인, 그리고 병사들이여! 나 켈투자드가 부르니 명을 받들라!",
+	Yell1Phase2	= "자비를 구하라!", -- 12995
+	Yell2Phase2	= "마지막 숨이나 쉬어라!", -- 12996
+	Yell3Phase2	= "최후를 맞이하라!", -- 12997
+	YellPhase3	= "주인님, 도와주소서!", -- 12998
+	YellGuardians	= "좋다. 얼어붙은 땅의 전사들이여, 일어나라! 너희에게 싸울 것을 명하노라. 날 위해 죽고, 날 위해 죽여라! 한 놈도 살려두지 마라!", -- 12994
 	setMissing	= "주목! DBM 자동 무기 해제/장착은 pve라는 장비 세트를 생성할 때까지 작동하지 않습니다.",
 	EqUneqLineDescription	= "자동 장착/장비 해제"
 })
