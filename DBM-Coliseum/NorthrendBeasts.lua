@@ -5,7 +5,7 @@ local UnitExists, UnitGUID, UnitName = UnitExists, UnitGUID, UnitName
 local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20230827170336")
+mod:SetRevision("20240717110907")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -37,9 +37,9 @@ local acidmaw = L.Acidmaw
 local icehowl = L.Icehowl
 
 -- General
-local enrageTimer			= mod:NewBerserkTimer(223) -- REVIEW! 2022/09/05 log with 233s fight time. Does Icehowl actually gets enraged or just the next massive crash will wipe the raid?
-local timerCombatStart		= mod:NewCombatTimer(23)
-local timerNextBoss			= mod:NewTimer(150, "TimerNextBoss", 2457, nil, nil, 1) -- 2min 30s, as per TC.
+local enrageTimer			= mod:NewBerserkTimer(520)
+local timerCombatStart		= mod:NewCombatTimer(11)
+local timerNextBoss			= mod:NewTimer(150, "TimerNextBoss", 2457, nil, nil, 1)
 
 mod:AddRangeFrameOption("10")
 
@@ -160,9 +160,6 @@ function mod:OnCombatStart(delay)
 		soundAuraMastery:Schedule(12-delay, "Interface\\AddOns\\DBM-Core\\sounds\\PlayerAbilities\\AuraMastery.ogg")
 	else
 		specWarnStompPreWarn:ScheduleVoice(12-delay, "silencesoon")
-	end
-	if self:IsHeroic() then
-		timerNextBoss:Start(-delay)
 	end
 	timerRisingAnger:Start(18-delay) -- REVIEW! ~10s variance? (25H Lordaeron 2022/09/03 || 25N Lordaeron 2022/09/23 || 25H Lordaeron 2022/09/24 || 25H Lordaeron 2022/09/28 || 10N Lordaeron 2022/10/02) - 18.9 || 26.1 || 29.7 || 21.9 || 18.2
 	timerNextStomp:Start(15-delay) -- (25H Lordaeron 2022/09/03) - 15.0
@@ -379,10 +376,18 @@ end
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.CombatStart or msg:find(L.CombatStart) then
 		timerCombatStart:Start()
+		if self:IsHeroic() then
+			timerNextBoss:Start()	-- events.RescheduleEvent(EVENT_SCENE_005, 150000); Worms
+									-- events.RescheduleEvent(EVENT_SCENE_006, 340000); Icehowl
+			enrageTimer:Start()		-- events.RescheduleEvent(EVENT_NORTHREND_BEASTS_ENRAGE, 520000);
+		end
 	elseif msg == L.Phase2 or msg:find(L.Phase2) then
 --		self:ScheduleMethod(13.5, "WormsEmerge")
-		timerCombatStart:Start(13.5)
-		timerNextBoss:Cancel()
+		timerCombatStart:Start(15)
+		if self:IsHeroic() then
+			local elapsedNextBossTimer = timerNextBoss:GetTime()
+			timerNextBoss:Restart(340-elapsedNextBossTimer)
+		end
 		updateHealthFrame(2)
 		self:SetStage(1.5)
 		if self.Options.RangeFrame then
@@ -394,13 +399,12 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	elseif msg == L.Phase3 or msg:find(L.Phase3) then
 		updateHealthFrame(3)
 		self:SetStage(2.5)
-		if self:IsHeroic() then
-			enrageTimer:Start()
-		end
 --		self:UnscheduleMethod("WormsSubmerge")
 --		self:UnscheduleMethod("WormsEmerge")
-		timerCombatStart:Start(10)
-		timerNextBoss:Cancel()
+		timerCombatStart:Start(13)
+		if self:IsHeroic() then
+			timerNextBoss:Cancel()
+		end
 		timerSubmerge:Cancel()
 		timerEmerge:Cancel()
 		if self.Options.RangeFrame then
