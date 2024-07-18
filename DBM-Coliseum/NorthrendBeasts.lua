@@ -5,7 +5,7 @@ local UnitExists, UnitGUID, UnitName = UnitExists, UnitGUID, UnitName
 local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20240717110907")
+mod:SetRevision("20240718111125")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -20,7 +20,7 @@ mod:RegisterEvents(
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 66689 67650 67651 67652 66313 66330 67647 67648 67649 66794 67644 67645 67646 66821 66818 66901 67615 67616 67617 66902 67627 67628 67629",
 	"SPELL_CAST_SUCCESS 67641 66883 67642 67643 66824 67612 67613 67614 66879 67624 67625 67626",
-	"SPELL_AURA_APPLIED 67477 66331 67478 67479 67657 66759 67658 67659 66823 67618 67619 67620 66869 66758 66636 68335",
+	"SPELL_AURA_APPLIED 67477 66331 67478 67479 67657 66759 67658 67659 66823 67618 67619 67620 66869 66758 66636 68335 676",
 	"SPELL_AURA_APPLIED_DOSE 67477 66331 67478 67479 66636",
 	"SPELL_AURA_REMOVED 66869",
 	"SPELL_DAMAGE 66320 67472 67473 67475 66317 66881 67638 67639 67640",
@@ -55,9 +55,9 @@ local specWarnGTFO			= mod:NewSpecialWarningGTFO(66317, nil, nil, nil, 1, 8)
 local specWarnSilence		= mod:NewSpecialWarningSpell(66330, "SpellCaster")
 local specWarnStompPreWarn	= mod:NewSpecialWarningPreWarn(66330, "SpellCaster", 3, nil, nil, 1, 2)
 
-local timerNextStomp		= mod:NewNextTimer(20, 66330, nil, nil, nil, 2, nil, DBM_COMMON_L.INTERRUPT_ICON, nil, mod:IsSpellCaster() and 3 or nil, 3) -- (25H Lordaeron 2022/09/03) - 20.0, 20.0, 20.0
-local timerImpaleCD			= mod:NewCDTimer(8, 66331, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- 2s variance [8.0-9.9]. Added "keep" arg (10H 2021/10/22 || 10N 2021/10/22 || 25H Lordaeron 2022/09/03) - 8.3, 8.6, 9.4, 8.0, 9.6, 9.4, 9.0, 9.1, 8.7, 9.4, 9.9, 8.2, 8.6 || 8.6, 8.1, 9.5, 9.6, 9.8, 8.7, 8.8, 9.6 || 9.2, 9.5, 9.7, 9.3, 9.5, 8.3, 8.5
-local timerRisingAnger		= mod:NewCDTimer(20.5, 66636, nil, nil, nil, 1, nil, nil, true) -- REVIEW! Normal Dose > 2 is all over the place! Heroic variance? Added "keep" arg (25H Lordaeron 2022/09/03 || 25N Lordaeron 2022/09/23 || 25H Lordaeron 2022/09/24 || 25H Lordaeron 2022/09/28 || 10N Lordaeron 2022/10/02 || 25H Lordaeron [2023-08-23]@[22:38:12]) - 20, 25 || 28.9, 22.6, 2.4, 13.1, 6.8, 7.4, 4.1, 0.6, 1.7, 3.8 || 24.7 || 29.9, 17.5 || 26.8, 12.7, 3.4, 1.1 || pull:24.8, 29.7
+local timerNextStomp		= mod:NewCDTimer(20, 66330, nil, nil, nil, 2, nil, DBM_COMMON_L.INTERRUPT_ICON, true, mod:IsSpellCaster() and 3 or nil, 3) -- 5s variance. Added "keep" arg
+local timerImpaleCD			= mod:NewCDTimer(9, 66331, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- 1s variance [9-10]. Added "keep" arg. If boss is disarmed once this script event fires, Impale cyclechecks every 2.5s until no longer disarmed. 10 stack only per player
+local timerRisingAnger		= mod:NewCDTimer(18.5, 66636, nil, nil, nil, 1, nil, nil, true) -- Snobold spawn on Gormok back: 8s variance [16-24] --> Release Snobold after 2.5s, granting also 1 stack of Rising Anger.
 
 local soundAuraMastery		= mod:NewSound(66330, "soundConcAuraMastery")
 
@@ -155,15 +155,15 @@ function mod:OnCombatStart(delay)
 	self.vb.DreadscaleDead = false
 	self.vb.AcidmawDead = false
 	self:SetStage(1)
-	specWarnStompPreWarn:Schedule(12-delay) -- 3s pre-warn. (10N Lordaeron 2022/10/02) - 14.9
+	specWarnStompPreWarn:Schedule(12-delay) -- 3s pre-warn.
 	if self.Options.soundConcAuraMastery and isBuffOwner("player", 19746) then -- Concentration Aura Mastery by a Paladin will negate the interrupt effect of Staggering Stomp
 		soundAuraMastery:Schedule(12-delay, "Interface\\AddOns\\DBM-Core\\sounds\\PlayerAbilities\\AuraMastery.ogg")
 	else
 		specWarnStompPreWarn:ScheduleVoice(12-delay, "silencesoon")
 	end
-	timerRisingAnger:Start(18-delay) -- REVIEW! ~10s variance? (25H Lordaeron 2022/09/03 || 25N Lordaeron 2022/09/23 || 25H Lordaeron 2022/09/24 || 25H Lordaeron 2022/09/28 || 10N Lordaeron 2022/10/02) - 18.9 || 26.1 || 29.7 || 21.9 || 18.2
-	timerNextStomp:Start(15-delay) -- (25H Lordaeron 2022/09/03) - 15.0
-	timerImpaleCD:Start() -- REVIEW! same 2s variance? (10H 2021/10/22 || 10N 2021/10/22 || 25H Lordaeron 2022/09/03) - 8 || 8 || 9.9
+	timerRisingAnger:Start(-delay)
+	timerNextStomp:Start(15-delay)
+	timerImpaleCD:Start() -- 1s variance [9-10]
 	updateHealthFrame(1)
 end
 
@@ -291,6 +291,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerRisingAnger:Start()
 	elseif spellId == 68335 then	-- Enrage
 		warnEnrageWorm:Show()
+	elseif spellId == 676 then		-- Disarm (Warriors) - 10s.
+		timerImpaleCD:Restart(10.5) -- Impale rechecks disarmed flag every 2.5s, so attempt to eyeball it in the middle
 	end
 end
 
@@ -309,15 +311,7 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 	elseif args.spellId == 66636 then	-- Rising Anger
 		local amount = args.amount or 1
 		WarningSnobold:Show(args.destName)
-		if amount < 3 then
---			if self:IsHeroic() then
-				timerRisingAnger:Start(17.5) -- (25H Lordaeron 2022/09/28) - 17.5
---			else
---				if amount < 3 then
---					timerRisingAnger:Start() -- Variance for normal dose is all over the place... Only first dose is timed since it has "some" level of consistency. (25N Lordaeron 2022/09/23 || 10N Lordaeron 2022/10/02 wipe || 10N Lordaeron 2022/10/02 kill || 25N Lordaeron 2022/10/21) - 26.1, 28.9, 22.6 || 26.8, 12.7 || 20.8, 30.0 || 17.7
---				end
---			end
-		elseif amount >= 3 then
+		if amount >= 4 then -- only 4 snobolds
 			timerRisingAnger:Stop()
 			specWarnAnger3:Show(amount)
 			specWarnAnger3:Play("stackhigh")
@@ -326,7 +320,8 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 end
 
 function mod:SPELL_AURA_REMOVED(args)
-	if args.spellId == 66869 then
+	local spellId = args.spellId
+	if spellId == 66869 then
 		if self.Options.SetIconOnBileTarget then
 			self:SetIcon(args.destName, 0)
 		end
