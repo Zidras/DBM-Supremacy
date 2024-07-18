@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod("NorthrendBeasts", "DBM-Coliseum")
 local L		= mod:GetLocalizedStrings()
 
-local UnitExists, UnitGUID, UnitName = UnitExists, UnitGUID, UnitName
+local --[[UnitExists,]] UnitGUID, UnitName = --[[UnitExists,]] UnitGUID, UnitName
 local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20240718111125")
+mod:SetRevision("20240718115306")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -27,7 +27,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_MISSED 66320 67472 67473 67475 66317 66881 67638 67639 67640",
 	"CHAT_MSG_RAID_BOSS_EMOTE",
 	"UNIT_DIED",
-	"UNIT_SPELLCAST_START boss1",
+--	"UNIT_SPELLCAST_START boss1",
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2"
 )
 
@@ -94,9 +94,10 @@ local specWarnCharge		= mod:NewSpecialWarningRun(52311, nil, nil, nil, 4, 2)
 local specWarnChargeNear	= mod:NewSpecialWarningClose(52311, nil, nil, nil, 3, 2)
 local specWarnFrothingRage	= mod:NewSpecialWarningDispel(66759, "RemoveEnrage", nil, nil, 1, 2)
 
-local timerBreath			= mod:NewCastTimer(5, 66689, nil, nil, nil, 3)--3 or 5? is it random target or tank?
+local timerBreath			= mod:NewCastTimer(5, 66689, nil, nil, nil, 3) -- 5s channel. is it random target or tank?
+local timerBreathCD			= mod:NewCDTimer(20, 66689, nil, nil, nil, 3) -- 10s variance [20-30]
 local timerStaggeredDaze	= mod:NewBuffActiveTimer(15, 66758, nil, nil, nil, 5, nil, DBM_COMMON_L.DAMAGE_ICON)
-local timerNextCrash		= mod:NewCDTimer(63.4, 66683, nil, nil, nil, 2, nil, DBM_COMMON_L.MYTHIC_ICON) -- REVIEW! variance? (25H Lordaeron 2022/09/03) - 63.4, 63.7
+local timerNextCrash		= mod:NewCDTimer(32, 66683, nil, nil, nil, 2, nil, DBM_COMMON_L.MYTHIC_ICON) -- Jump + 2s for spell
 
 mod:AddSetIconOption("SetIconOnChargeTarget", 52311, true, 0, {8})
 mod:AddBoolOption("ClearIconsOnIceHowl", true)
@@ -108,9 +109,9 @@ mod:GroupSpells(52311, 66758, 66759)--Furious Charge, Staggering Daze, and Froth
 
 local bileName = DBM:GetSpellInfo(66869)
 local phases = {}
-local acidmawEngaged = false
+-- local acidmawEngaged = false
 local acidmawSubmerged = false
-local dreadscaleEngaged = false
+-- local dreadscaleEngaged = false
 mod.vb.burnIcon = 1
 mod.vb.DreadscaleMobile = true
 mod.vb.AcidmawMobile = false
@@ -144,11 +145,21 @@ local function isBuffOwner(uId, spellId)
 	end
 end
 
+local function wormsEngaged(self)
+	self:SetStage(2)
+end
+
+local function icehowlEngaged(self)
+	self:SetStage(3)
+	timerBreathCD:Start(14)
+	timerNextCrash:Start(32) -- Fixed timer: 30s jump + 2s spell
+end
+
 function mod:OnCombatStart(delay)
 	table.wipe(phases)
-	acidmawEngaged = false
+--	acidmawEngaged = false
 	acidmawSubmerged = false
-	dreadscaleEngaged = false
+--	dreadscaleEngaged = false
 	self.vb.burnIcon = 8
 	self.vb.DreadscaleMobile = true
 	self.vb.AcidmawMobile = false
@@ -221,6 +232,7 @@ end]]
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if args:IsSpellID(66689, 67650, 67651, 67652) then			-- Arctic Breath
+		timerBreathCD:Start()
 		timerBreath:Start()
 		warnBreath:Show()
 	elseif spellId == 66313 then						-- FireBomb (Impaler)
@@ -265,6 +277,8 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerImpaleCD:Start()
 		warnImpaleOn:Show(args.destName, 1)
 	elseif args:IsSpellID(67657, 66759, 67658, 67659) then	-- Frothing Rage
+		timerBreathCD:Start(5) -- 3s variance [5-8]
+		timerNextCrash:Start(32) -- 20s variance! [30-50] + 2s spell
 		warnRage:Show()
 		specWarnFrothingRage:Show()
 		specWarnFrothingRage:Play("trannow")
@@ -286,6 +300,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif spellId == 66758 then	-- Staggered Daze
 		timerStaggeredDaze:Start()
+		-- Delays events by 15s
+		timerBreathCD:Start(20) -- 3s variance [5-8] + 15s delay
+		timerNextCrash:Start(47) -- 20s variance! [30-50] + 15s delay + 2s spell
 	elseif spellId == 66636 then	-- Rising Anger
 		WarningSnobold:Show(args.destName)
 		timerRisingAnger:Start()
@@ -377,25 +394,27 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 			enrageTimer:Start()		-- events.RescheduleEvent(EVENT_NORTHREND_BEASTS_ENRAGE, 520000);
 		end
 	elseif msg == L.Phase2 or msg:find(L.Phase2) then
+		self:SetStage(1.5)
 --		self:ScheduleMethod(13.5, "WormsEmerge")
+		self:Schedule(15, wormsEngaged, self)
 		timerCombatStart:Start(15)
 		if self:IsHeroic() then
 			local elapsedNextBossTimer = timerNextBoss:GetTime()
 			timerNextBoss:Restart(340-elapsedNextBossTimer)
 		end
 		updateHealthFrame(2)
-		self:SetStage(1.5)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show(10)
 		end
-		self:RegisterShortTermEvents(
+--[[	self:RegisterShortTermEvents(
 			"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
-		)
+		)]]
 	elseif msg == L.Phase3 or msg:find(L.Phase3) then
 		updateHealthFrame(3)
 		self:SetStage(2.5)
 --		self:UnscheduleMethod("WormsSubmerge")
 --		self:UnscheduleMethod("WormsEmerge")
+		self:Schedule(13, icehowlEngaged, self)
 		timerCombatStart:Start(13)
 		if self:IsHeroic() then
 			timerNextBoss:Cancel()
@@ -405,9 +424,9 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Hide()
 		end
-		self:RegisterShortTermEvents(
+--[[	self:RegisterShortTermEvents(
 			"INSTANCE_ENCOUNTER_ENGAGE_UNIT"
-		)
+		)]]
 	end
 end
 
@@ -456,7 +475,7 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
+--[[function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 	for i = 1, 5 do
 		local unitID = "boss"..i
 		if UnitExists(unitID) then
@@ -487,13 +506,13 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 			end
 		end
 	end
-end
+end]]
 
-function mod:UNIT_SPELLCAST_START(_, spellName)
+--[[function mod:UNIT_SPELLCAST_START(_, spellName)
 	if spellName == GetSpellInfo(66683) then -- Massive Crash
 		timerNextCrash:Start()
 	end
-end
+end]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName)
 	if spellName == GetSpellInfo(66948) then -- Submerge
