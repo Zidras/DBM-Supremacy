@@ -5,7 +5,7 @@ local --[[UnitExists,]] UnitGUID, UnitName = --[[UnitExists,]] UnitGUID, UnitNam
 -- local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20240719125225")
+mod:SetRevision("20240719173745")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -150,7 +150,7 @@ local function wormsEngaged(self)
 end
 
 local function scheduledAcidmawSubmerged(self) -- no submerge emote
-	DBM:AddEventToTranscriptorLog("Acidmaw Submerged")
+	DBM:AddSpecialEventToTranscriptorLog("Acidmaw Submerged")
 	timerAcidicSpewCD:Stop()
 	timerParalyticBiteCD:Stop()
 	timerParalyticSprayCD:Stop()
