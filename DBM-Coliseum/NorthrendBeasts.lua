@@ -5,7 +5,7 @@ local --[[UnitExists,]] UnitGUID, UnitName = --[[UnitExists,]] UnitGUID, UnitNam
 -- local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20240719173745")
+mod:SetRevision("20240719182530")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -145,9 +145,24 @@ local function isBuffOwner(uId, spellId)
 	end
 end
 
-local function wormsEngaged(self)
-	self:SetStage(2)
+local function slimePoolOnRepeat(self)
+	warnSlimePool:Show()
+	timerSlimePoolCD:Start(self.vb.DreadscaleMobile and dreadscale or acidmaw)
+	self:Schedule(30, slimePoolOnRepeat, self)
 end
+
+local function wormsEngaged(self) -- Acidmaw = _MODEL_STATIONARY ; Dreadscale is Mobile. Fires ScheduleEvents()
+	self:SetStage(2)
+	timerSubmerge:Start(acidmaw)
+	timerSubmerge:Start(dreadscale)
+	timerSweepCD:Start(acidmaw)
+	timerParalyticSprayCD:Start()
+	timerSlimePoolCD:Start(15, dreadscale)
+	self:Schedule(15, slimePoolOnRepeat, self)
+	timerMoltenSpewCD:Start()
+	timerBurningBiteCD:Start(15)
+end
+
 
 local function scheduledAcidmawSubmerged(self) -- no submerge emote
 	DBM:AddSpecialEventToTranscriptorLog("Acidmaw Submerged")
@@ -155,6 +170,7 @@ local function scheduledAcidmawSubmerged(self) -- no submerge emote
 	timerParalyticBiteCD:Stop()
 	timerParalyticSprayCD:Stop()
 	timerSlimePoolCD:Stop(acidmaw)
+	self:Unschedule(slimePoolOnRepeat)
 	timerSweepCD:Stop(acidmaw)
 	timerSubmerge:Stop(acidmaw)
 	timerEmerge:Start(acidmaw)
@@ -407,10 +423,11 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, sender, _, _, target)
 			timerBurningBiteCD:Stop()
 			timerBurningSprayCD:Stop()
 			timerSlimePoolCD:Stop(dreadscale)
+			self:Unschedule(slimePoolOnRepeat)
 			timerSweepCD:Stop(dreadscale)
 			timerSubmerge:Stop(dreadscale)
 			timerEmerge:Start(dreadscale)
-			self:Schedule(1.5, scheduledAcidmawSubmerged)
+			self:Schedule(1.5, scheduledAcidmawSubmerged, self)
 		end
 	elseif (msg == L.DreadscaleEmerged or msg:find(L.DreadscaleEmerged)) or (msg == L.AcidmawEmerged or msg:find(L.AcidmawEmerged)) then
 		DBM:Debug("Emerge casted by " .. sender, 2)
@@ -420,6 +437,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, sender, _, _, target)
 			timerSubmerge:Start(acidmaw)
 			if self.vb.AcidmawMobile then
 				timerSlimePoolCD:Start(15, acidmaw) -- Fixed timer for ScheduleEvents() on Emerge: 15s
+				self:Schedule(15, slimePoolOnRepeat, self)
 				timerParalyticBiteCD:Start() --  Fixed timer for ScheduleEvents() on Emerge: 20s (if Acidmaw)
 				timerAcidicSpewCD:Start() -- Same variance for ScheduleEvents() on Emerge: 15-30s
 			else
@@ -432,6 +450,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, sender, _, _, target)
 			timerSubmerge:Start(dreadscale)
 			if self.vb.DreadscaleMobile then
 				timerSlimePoolCD:Start(15, dreadscale) -- Fixed timer for ScheduleEvents() on Emerge: 15s
+				self:Schedule(15, slimePoolOnRepeat, self)
 				timerMoltenSpewCD:Start() -- Same variance for ScheduleEvents() on Emerge: 15-30s
 				timerBurningBiteCD:Start(15) -- Fixed timer for ScheduleEvents() on Emerge: 15s (if Dreadscale)
 			else
@@ -506,6 +525,7 @@ function mod:UNIT_DIED(args)
 			timerSweepCD:Cancel(args.destName)
 		else
 			timerSlimePoolCD:Cancel(args.destName)
+			self:Unschedule(slimePoolOnRepeat)
 		end
 		if self.vb.DreadscaleDead then
 			timerNextBoss:Cancel()
@@ -519,6 +539,7 @@ function mod:UNIT_DIED(args)
 		timerMoltenSpewCD:Cancel()
 		if self.vb.DreadscaleMobile then
 			timerSlimePoolCD:Cancel(args.destName)
+			self:Unschedule(slimePoolOnRepeat)
 		else
 			timerSweepCD:Cancel(args.destName)
 		end
