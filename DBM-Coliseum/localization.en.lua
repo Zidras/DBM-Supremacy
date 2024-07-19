@@ -31,10 +31,10 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Charge				= "^%%s glares at (%S+) and lets out",
-	CombatStart			= "Hailing from the deepest, darkest caverns of the Storm Peaks, Gormok the Impaler! Battle on, heroes!",
-	Phase2				= "Steel yourselves, heroes, for the twin terrors, Acidmaw and Dreadscale, enter the arena!",
-	Phase3				= "The air itself freezes with the introduction of our next combatant, Icehowl! Kill or be killed, champions!",
+	Charge				= "^%%s glares at (%S+) and lets out a bellowing roar!", -- 35675
+	CombatStart			= "Hailing from the deepest, darkest caverns of the Storm Peaks, Gormok the Impaler! Battle on, heroes!", -- 35710
+	Phase2				= "Steel yourselves, heroes, for the twin terrors, Acidmaw and Dreadscale, enter the arena!", -- 35711
+	Phase3				= "The air itself freezes with the introduction of our next combatant, Icehowl! Kill or be killed, champions!", -- 35712
 	DreadscaleSubmerged	= "%s buries itself in the earth!", -- 34799_1_0
 	DreadscaleEmerged	= "%s getting out of the ground!", --  34799_2_0
 	AcidmawEmerged		= "%s getting out of the ground!", --  35144_2_0

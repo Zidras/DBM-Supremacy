@@ -5,7 +5,7 @@ local --[[UnitExists,]] UnitGUID, UnitName = --[[UnitExists,]] UnitGUID, UnitNam
 -- local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20240719182530")
+mod:SetRevision("20240719212100")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -72,7 +72,7 @@ local specWarnToxin			= mod:NewSpecialWarningMoveTo(66823, nil, nil, nil, 1, 2)
 local specWarnBile			= mod:NewSpecialWarningYou(66869, nil, nil, nil, 1, 2)
 
 local timerSubmerge			= mod:NewCDSourceTimer(45, 66948, nil, nil, nil, 6, "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendBurrow.blp", nil, true) -- 5s variance [45-50]. Added "Keep" arg
-local timerEmerge			= mod:NewBuffActiveTimer(8.5, 66947, nil, nil, nil, 6, "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendUnBurrow.blp") -- 2.5s burrowing + 6s underground
+local timerEmerge			= mod:NewNextSourceTimer(8.5, 66947, nil, nil, nil, 6, "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendUnBurrow.blp") -- 2.5s burrowing + 6s underground
 local timerSweepCD			= mod:NewCDSourceTimer(15, 66794, nil, "Melee", nil, 3, nil, nil, true) -- 15s variance! [15-30] (EVENT_SPELL_SWEEP). Added "Keep" arg.
 local timerAcidicSpewCD		= mod:NewCDTimer(15, 66819, nil, "Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- 15s variance! [15-30] (EVENT_SPELL_SPEW). Added "Keep" arg.
 local timerMoltenSpewCD		= mod:NewCDTimer(15, 66820, nil, "Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- 15s variance! [15-30] (EVENT_SPELL_SPEW). Added "Keep" arg.
@@ -173,7 +173,7 @@ local function scheduledAcidmawSubmerged(self) -- no submerge emote
 	self:Unschedule(slimePoolOnRepeat)
 	timerSweepCD:Stop(acidmaw)
 	timerSubmerge:Stop(acidmaw)
-	timerEmerge:Start(acidmaw)
+	timerEmerge:Start(acidmaw, acidmaw)
 end
 
 local function icehowlEngaged(self)
@@ -258,11 +258,7 @@ end]]
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
-	if args:IsSpellID(66689, 67650, 67651, 67652) then			-- Arctic Breath
-		timerBreathCD:Start()
-		timerBreath:Start()
-		warnBreath:Show()
-	elseif spellId == 66313 then						-- FireBomb (Impaler)
+	if spellId == 66313 then									-- FireBomb (Impaler)
 		warnFireBomb:Show()
 	elseif args:IsSpellID(66330, 67647, 67648, 67649) then		-- Staggering Stomp
 		timerNextStomp:Start()
@@ -297,6 +293,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerParalyticBiteCD:Start()
 	elseif args:IsSpellID(66879, 67624, 67625, 67626) then		-- Burning Bite
 		timerBurningBiteCD:Start()
+	elseif args:IsSpellID(66689, 67650, 67651, 67652) then		-- Arctic Breath
+		timerBreathCD:Start()
+		timerBreath:Start()
+		warnBreath:Show()
 	end
 end
 
@@ -426,7 +426,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, sender, _, _, target)
 			self:Unschedule(slimePoolOnRepeat)
 			timerSweepCD:Stop(dreadscale)
 			timerSubmerge:Stop(dreadscale)
-			timerEmerge:Start(dreadscale)
+			timerEmerge:Start(dreadscale, dreadscale)
 			self:Schedule(1.5, scheduledAcidmawSubmerged, self)
 		end
 	elseif (msg == L.DreadscaleEmerged or msg:find(L.DreadscaleEmerged)) or (msg == L.AcidmawEmerged or msg:find(L.AcidmawEmerged)) then
@@ -496,7 +496,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 			timerNextBoss:Cancel()
 		end
 		timerSubmerge:Cancel()
-		timerEmerge:Cancel()
+		timerEmerge:Cancel(nil, dreadscale)
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Hide()
 		end
