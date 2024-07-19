@@ -42,6 +42,9 @@ L:SetMiscLocalization({
 	CombatStart			= "他来自风暴峭壁最幽深，最黑暗的洞穴，穿刺者戈莫克！准备战斗，英雄们！",
 	Phase2				= "做好准备，英雄们，两头猛兽已经进入了竞技场！它们是酸喉和恐鳞！",
 	Phase3				= "当下一名斗士出场时，空气都会为之冻结！它是冰吼，胜或是死，勇士们！",
+	DreadscaleSubmerged	= "看到同伴的死亡，%s被激怒了！", -- 34799_1_0
+	DreadscaleEmerged	= "看到同伴的死亡，%s被激怒了！", --  34799_2_0
+	AcidmawEmerged		= "%s从地下钻出来了！", --  35144_2_0
 	Gormok				= "穿刺者戈莫克",
 	Acidmaw				= "酸喉",
 	Dreadscale			= "恐鳞",

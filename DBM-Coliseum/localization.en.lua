@@ -35,6 +35,9 @@ L:SetMiscLocalization({
 	CombatStart			= "Hailing from the deepest, darkest caverns of the Storm Peaks, Gormok the Impaler! Battle on, heroes!",
 	Phase2				= "Steel yourselves, heroes, for the twin terrors, Acidmaw and Dreadscale, enter the arena!",
 	Phase3				= "The air itself freezes with the introduction of our next combatant, Icehowl! Kill or be killed, champions!",
+	DreadscaleSubmerged	= "%s buries itself in the earth!", -- 34799_1_0
+	DreadscaleEmerged	= "%s getting out of the ground!", --  34799_2_0
+	AcidmawEmerged		= "%s getting out of the ground!", --  35144_2_0
 	Gormok				= "Gormok the Impaler",
 	Acidmaw				= "Acidmaw",
 	Dreadscale			= "Dreadscale",
