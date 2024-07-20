@@ -5,7 +5,7 @@ local --[[UnitExists,]] UnitGUID, UnitName = --[[UnitExists,]] UnitGUID, UnitNam
 -- local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20240719212100")
+mod:SetRevision("20240720012127")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -18,11 +18,11 @@ mod:RegisterEvents(
 	"CHAT_MSG_MONSTER_YELL"
 )
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 66689 67650 67651 67652 66313 66330 67647 67648 67649 66794 67644 67645 67646 66821 66818 66901 67615 67616 67617 66902 67627 67628 67629 66683",
-	"SPELL_CAST_SUCCESS 67641 66883 67642 67643 66824 67612 67613 67614 66879 67624 67625 67626",
+	"SPELL_CAST_START 66313 66330 67647 67648 67649 66794 67644 67645 67646 66821 66818 66901 67615 67616 67617 66902 67627 67628 67629 66683 67660 67661 67662",
+	"SPELL_CAST_SUCCESS 67641 66883 67642 67643 66824 67612 67613 67614 66879 67624 67625 67626 66689 67650 67651 67652",
 	"SPELL_AURA_APPLIED 67477 66331 67478 67479 67657 66759 67658 67659 66823 67618 67619 67620 66869 66758 66636 68335 676",
 	"SPELL_AURA_APPLIED_DOSE 67477 66331 67478 67479 66636",
-	"SPELL_AURA_REMOVED 66869",
+	"SPELL_AURA_REMOVED 66869 66758",
 	"SPELL_DAMAGE 66320 67472 67473 67475 66317 66881 67638 67639 67640",
 	"SPELL_MISSED 66320 67472 67473 67475 66317 66881 67638 67639 67640",
 	"CHAT_MSG_RAID_BOSS_EMOTE",
@@ -95,9 +95,9 @@ local specWarnChargeNear	= mod:NewSpecialWarningClose(52311, nil, nil, nil, 3, 2
 local specWarnFrothingRage	= mod:NewSpecialWarningDispel(66759, "RemoveEnrage", nil, nil, 1, 2)
 
 local timerBreath			= mod:NewCastTimer(5, 66689, nil, nil, nil, 3) -- 5s channel. is it random target or tank?
-local timerBreathCD			= mod:NewCDTimer(20, 66689, nil, nil, nil, 3) -- 10s variance [20-30]
+local timerBreathCD			= mod:NewCDTimer(20, 66689, nil, nil, nil, 3, nil, nil, true) -- 10s variance [20-30]. Added "Keep" arg
 local timerStaggeredDaze	= mod:NewBuffActiveTimer(15, 66758, nil, nil, nil, 5, nil, DBM_COMMON_L.DAMAGE_ICON)
-local timerNextCrash		= mod:NewCDTimer(32, 66683, nil, nil, nil, 2, nil, DBM_COMMON_L.MYTHIC_ICON) -- Jump + 2s for spell
+local timerNextCrash		= mod:NewCDTimer(32, 66683, nil, nil, nil, 2, nil, DBM_COMMON_L.MYTHIC_ICON, true) -- Jump + 2s for spell. Added "Keep" arg.
 
 mod:AddSetIconOption("SetIconOnChargeTarget", 52311, true, 0, {8})
 mod:AddBoolOption("ClearIconsOnIceHowl", true)
@@ -147,7 +147,7 @@ end
 
 local function slimePoolOnRepeat(self)
 	warnSlimePool:Show()
-	timerSlimePoolCD:Start(self.vb.DreadscaleMobile and dreadscale or acidmaw)
+	timerSlimePoolCD:Start(self.vb.DreadscaleMobile and not self.vb.DreadscaleDead and dreadscale or acidmaw)
 	self:Schedule(30, slimePoolOnRepeat, self)
 end
 
@@ -173,13 +173,13 @@ local function scheduledAcidmawSubmerged(self) -- no submerge emote
 	self:Unschedule(slimePoolOnRepeat)
 	timerSweepCD:Stop(acidmaw)
 	timerSubmerge:Stop(acidmaw)
-	timerEmerge:Start(acidmaw, acidmaw)
+	timerEmerge:Start(acidmaw)
 end
 
 local function icehowlEngaged(self)
 	self:SetStage(3)
 	timerBreathCD:Start(14)
-	timerNextCrash:Start(32) -- Fixed timer: 30s jump + 2s spell
+	timerNextCrash:Start() -- Fixed timer: 30s jump + 2s spell
 end
 
 function mod:OnCombatStart(delay)
@@ -280,8 +280,10 @@ function mod:SPELL_CAST_START(args)
 	elseif args:IsSpellID(66902, 67627, 67628, 67629) then		-- Burning Spray
 		self.vb.burnIcon = 1
 		timerBurningSprayCD:Start()
-	elseif spellId == 66683 then								-- Massive Crash (Icehowl)
+	elseif args:IsSpellID(66683, 67660, 67661, 67662) then		-- Massive Crash (Icehowl)
 		timerBreathCD:Cancel()
+		timerNextCrash:Start() -- debug
+		timerNextCrash:Cancel()
 	end
 end
 
@@ -307,7 +309,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnImpaleOn:Show(args.destName, 1)
 	elseif args:IsSpellID(67657, 66759, 67658, 67659) then	-- Frothing Rage
 		timerBreathCD:Start(5) -- 3s variance [5-8]
-		timerNextCrash:Start(32) -- 20s variance! [30-50] + 2s spell
+		timerNextCrash:Start() -- 20s variance! [30-50] + 2s spell
 		warnRage:Show()
 		specWarnFrothingRage:Show()
 		specWarnFrothingRage:Play("trannow")
@@ -329,15 +331,14 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif spellId == 66758 then	-- Staggered Daze
 		timerStaggeredDaze:Start()
-		-- Delays events by 15s
-		timerBreathCD:Start(20) -- 3s variance [5-8] + 15s delay
-		timerNextCrash:Start(47) -- 20s variance! [30-50] + 15s delay + 2s spell
+		-- Delays events by 15s?? Not working as expected
+--		timerBreathCD:Start() -- 3s variance [5-8] + 15s delay
+--		timerNextCrash:Start() -- 20s variance! [30-50] + [15s delay] + 2s spell
 	elseif spellId == 66636 then	-- Rising Anger
 		WarningSnobold:Show(args.destName)
 		timerRisingAnger:Start()
 	elseif spellId == 68335 then	-- Enrage
 		warnEnrageWorm:Show()
-		timerSubmerge:Cancel() -- Enraged worm cannot submerge
 	elseif spellId == 676 then		-- Disarm (Warriors) - 10s.
 		timerImpaleCD:Restart(10.5) -- Impale rechecks disarmed flag every 2.5s, so attempt to eyeball it in the middle
 	end
@@ -373,6 +374,9 @@ function mod:SPELL_AURA_REMOVED(args)
 		if self.Options.SetIconOnBileTarget then
 			self:SetIcon(args.destName, 0)
 		end
+	elseif spellId == 66758 then -- Techincally not in line with script (not on SAR), but looks better during event. Unfortunately, these timers are also all over the place...
+		timerBreathCD:Start(11.82) -- 10s+ variance?
+		timerNextCrash:Start(23.41) -- 20s+? variance?
 	end
 end
 
@@ -426,8 +430,10 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, sender, _, _, target)
 			self:Unschedule(slimePoolOnRepeat)
 			timerSweepCD:Stop(dreadscale)
 			timerSubmerge:Stop(dreadscale)
-			timerEmerge:Start(dreadscale, dreadscale)
-			self:Schedule(1.5, scheduledAcidmawSubmerged, self)
+			timerEmerge:Start(dreadscale)
+			if not self.vb.AcidmawDead then
+				self:Schedule(1.5, scheduledAcidmawSubmerged, self)
+			end
 		end
 	elseif (msg == L.DreadscaleEmerged or msg:find(L.DreadscaleEmerged)) or (msg == L.AcidmawEmerged or msg:find(L.AcidmawEmerged)) then
 		DBM:Debug("Emerge casted by " .. sender, 2)
@@ -496,7 +502,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 			timerNextBoss:Cancel()
 		end
 		timerSubmerge:Cancel()
-		timerEmerge:Cancel(nil, dreadscale)
+		timerEmerge:Cancel()
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Hide()
 		end
@@ -516,27 +522,37 @@ function mod:UNIT_DIED(args)
 		timerImpaleCD:Stop()
 		timerRisingAnger:Stop()
 		DBM.BossHealth:RemoveBoss(cid) -- remove Gormok from the health frame
-	elseif cid == 35144 then
+	elseif cid == 35144 then -- Acidmaw dead
+		-- DoAction(-2)
 		self.vb.AcidmawDead = true
 		timerParalyticSprayCD:Cancel()
 		timerParalyticBiteCD:Cancel()
 		timerAcidicSpewCD:Cancel()
-		if self.vb.DreadscaleMobile then
-			timerSweepCD:Cancel(args.destName)
-		else
+		timerSubmerge:Cancel(acidmaw)
+		if self.vb.AcidmawMobile then
 			timerSlimePoolCD:Cancel(args.destName)
 			self:Unschedule(slimePoolOnRepeat)
+		else
+			timerSweepCD:Cancel(args.destName)
 		end
 		if self.vb.DreadscaleDead then
 			timerNextBoss:Cancel()
 			DBM.BossHealth:RemoveBoss(35144)
 			DBM.BossHealth:RemoveBoss(34799)
+		else
+			if self.vb.DreadscaleMobile then -- Dreadscale mobile
+				timerSubmerge:Cancel(dreadscale)
+			else -- Dreadscale stationary
+				timerSubmerge:Start(1, dreadscale)
+			end
 		end
-	elseif cid == 34799 then
+	elseif cid == 34799 then -- Dreadscale dead
+		-- DoAction(-2)
 		self.vb.DreadscaleDead = true
 		timerBurningSprayCD:Cancel()
 		timerBurningBiteCD:Cancel()
 		timerMoltenSpewCD:Cancel()
+		timerSubmerge:Cancel(dreadscale)
 		if self.vb.DreadscaleMobile then
 			timerSlimePoolCD:Cancel(args.destName)
 			self:Unschedule(slimePoolOnRepeat)
@@ -547,6 +563,13 @@ function mod:UNIT_DIED(args)
 			timerNextBoss:Cancel()
 			DBM.BossHealth:RemoveBoss(35144)
 			DBM.BossHealth:RemoveBoss(34799)
+		else
+			if self.vb.AcidmawMobile then -- Acidmaw mobile
+				timerSubmerge:Cancel(acidmaw)
+			else -- Acidmaw stationary
+				timerSubmerge:Start(1, acidmaw)
+				self:Schedule(1, scheduledAcidmawSubmerged, self)
+			end
 		end
 	elseif cid == 34797 then
 		DBM:EndCombat(self)

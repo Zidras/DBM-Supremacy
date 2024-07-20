@@ -33,7 +33,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Charge				= "¡^%%s mira a (%S+) y emite un bramido!",
+	Charge				= "¡%%s mira a (%S+) y emite un bramido!",
 	CombatStart			= "¡De las cavernas más profundas y oscuras de las Cumbres Tormentosas: Gormok el Empalador! ¡Al combate, héroes!",
 	Phase2				= "¡Prepárense, héroes: los gemelos terribles, Fauceácida y Aterraescama, entran a la arena!",
 	Phase3				= "El mismísimo aire se congela al presentar a nuestro próximo combatiente, ¡Aullahielo! ¡Maten o mueran, campeones!",
