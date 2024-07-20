@@ -5,7 +5,7 @@ local --[[UnitExists,]] UnitGUID, UnitName = --[[UnitExists,]] UnitGUID, UnitNam
 -- local GetSpellInfo = GetSpellInfo
 local GetPlayerMapPosition, SetMapToCurrentZone = GetPlayerMapPosition, SetMapToCurrentZone
 
-mod:SetRevision("20240720012127")
+mod:SetRevision("20240720131648")
 mod:SetCreatureID(34796, 35144, 34799, 34797)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220925000000)
@@ -296,8 +296,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args:IsSpellID(66879, 67624, 67625, 67626) then		-- Burning Bite
 		timerBurningBiteCD:Start()
 	elseif args:IsSpellID(66689, 67650, 67651, 67652) then		-- Arctic Breath
-		timerBreathCD:Start()
 		timerBreath:Start()
+		timerBreathCD:Start()
 		warnBreath:Show()
 	end
 end
@@ -374,7 +374,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		if self.Options.SetIconOnBileTarget then
 			self:SetIcon(args.destName, 0)
 		end
-	elseif spellId == 66758 then -- Techincally not in line with script (not on SAR), but looks better during event. Unfortunately, these timers are also all over the place...
+	elseif spellId == 66758 then -- Staggered Daze. Techincally not in line with script (not on SAR), but looks better during event. Unfortunately, these timers are also all over the place...
 		timerBreathCD:Start(11.82) -- 10s+ variance?
 		timerNextCrash:Start(23.41) -- 20s+? variance?
 	end
