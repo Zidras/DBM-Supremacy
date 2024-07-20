@@ -32,7 +32,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	Charge			= "fusille (%S+) du regard",
+	Charge			= "fusille (%S+) du regard et lâche un rugissement assourdissant !",
 	CombatStart		= "Arrivant tout droit des plus noires et profondes cavernes des pics Foudroyés, Gormok l'Empaleur !",
 	Phase2			= "car voici que les terreurs jumelles",
 	Phase3			= "de notre prochain combattant",
