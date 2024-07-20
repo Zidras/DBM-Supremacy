@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Jaraxxus", "DBM-Coliseum")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240521122708")
+mod:SetRevision("20240720194835")
 mod:SetCreatureID(34780)
 --mod:SetMinCombatTime(30)
 mod:SetUsedIcons(7, 8)
@@ -42,15 +42,15 @@ local SpecWarnFelFireballDispel	= mod:NewSpecialWarningDispel(66532, "RemoveMagi
 
 local timerCombatStart			= mod:NewCombatTimer(76)--roleplay for first pull
 local timerFlame				= mod:NewTargetTimer(8, 66197, nil, nil, nil, 3)--There are 8 debuff Ids. Since we detect first to warn, use an 8sec timer to cover duration of trigger spell and damage debuff.
-local timerFlameCD				= mod:NewNextTimer(30, 66197, nil, nil, nil, 3) -- (25H Lordaeron 2022/09/03) - 30.0, 30.0, 30.1, 30.0, 30.1, 30.0
-local timerNetherPowerCD		= mod:NewNextTimer(45, 67009, nil, "MagicDispeller", nil, 5, nil, DBM_COMMON_L.MAGIC_ICON) -- (25H Lordaeron 2022/09/03) - 45.1, 45.0, 45.0, 45.0
+local timerFlameCD				= mod:NewNextTimer(30, 66197, nil, nil, nil, 3) -- Fixed timer
+local timerNetherPowerCD		= mod:NewCDTimer(25, 67009, nil, "MagicDispeller", nil, 5, nil, DBM_COMMON_L.MAGIC_ICON, true) -- 20s variance [25-45]! Added "keep" arg
 local timerFlesh				= mod:NewTargetTimer(12, 66237, nil, "Healer", 2, 5, nil, DBM_COMMON_L.HEALER_ICON)
-local timerFleshCD				= mod:NewNextTimer(30, 66237, nil, "Healer", 2, 5, nil, DBM_COMMON_L.HEALER_ICON) -- (25H Lordaeron 2022/09/03) - 30.0, 30.0, 30.0, 30.1, 30.0, 30.0
-local timerPortalCD				= mod:NewCDTimer(120, 66269, nil, nil, nil, 1, nil, nil, true) -- REVIEW! 7s variance? Added "keep" arg (25H Lordaeron 2022/09/03 || 25H Lordaeron 2022/09/24) - 120.0 || 127.0
-local timerVolcanoCD			= mod:NewCDTimer(120, 66258, nil, nil, nil, 1) -- REVIEW! ~1s variance? (25H Lordaeron 2022/09/03 || 25H Lordaeron 2022/09/24) - 120.0 || 120.8
-local timerFelLightning			= mod:NewCDTimer(10, 67031, nil, nil, nil, 3, nil, nil, true) -- 7s variance [10-17]. Added "keep" arg (25H Lordaeron 2022/09/24 || 10N Lordaeron 2022/10/02) - 15.0, 12.8, 16.3, 12.1, 17.0, 14.8, 11.4, 11.1, 13.7, 14.0, 12.9, 14.2, 10.1, 10.5, 11.7 || 11.5, 12.4, 14.6, 13.4, 13.1
+local timerFleshCD				= mod:NewCDTimer(20, 66237, nil, "Healer", 2, 5, nil, DBM_COMMON_L.HEALER_ICON, true) -- 5s variance [20-25]. Added "keep" arg
+local timerPortalCD				= mod:NewCDTimer(120, 66269, nil, nil, nil, 1) -- Fixed timer (1 min Volcano + 1 min Portal). Kept as 120s for GUI purposes, but timers below will follow script
+local timerVolcanoCD			= mod:NewCDTimer(120, 66258, nil, nil, nil, 1) -- Fixed timer (1 min Volcano + 1 min Portal). Kept as 120s for GUI purposes, but timers below will follow script
+local timerFelLightning			= mod:NewCDTimer(10, 67031, nil, nil, nil, 3, nil, nil, true) -- 5s variance [10-15]. Added "keep" arg
 
-local enrageTimer				= mod:NewBerserkTimer(600)
+-- local enrageTimer				= mod:NewBerserkTimer(600)
 
 mod:AddSetIconOption("LegionFlameIcon", 66197, true, 0, {7})
 mod:AddSetIconOption("IncinerateFleshIcon", 66237, true, 0, {8})
@@ -67,15 +67,15 @@ function mod:OnCombatStart(delay)
 		DBM.BossHealth:AddBoss(34780, L.name)
 	end
 	self.vb.fleshCount = 0
-	timerPortalCD:Start(22-delay) -- (25H Lordaeron 2022/09/03 || 25H Lordaeron 2022/09/24) - 22.0 || 22.0
-	warnPortalSoon:Schedule(17-delay)
-	timerVolcanoCD:Start(82-delay) -- (25H Lordaeron 2022/09/03 || 25H Lordaeron 2022/09/24) - 82.0 || 89.0
-	warnVolcanoSoon:Schedule(77-delay)
-	timerNetherPowerCD:Start(15-delay) -- (25H Lordaeron 2022/09/03) - 15.0
-	timerFleshCD:Start(13-delay) -- (25H Lordaeron 2022/09/03) - 13.0
-	timerFlameCD:Start(20-delay) -- (25H Lordaeron 2022/09/03) - 20.0
-	timerFelLightning:Start(-delay) -- (25H Lordaeron 2022/09/24 || 10N Lordaeron 2022/10/02) - 10.0 || 10.1
-	enrageTimer:Start(-delay)
+	timerPortalCD:Start(20-delay) -- Fixed timer
+	warnPortalSoon:Schedule(15-delay)
+	timerVolcanoCD:Start(80-delay) -- Nether Portal timer + 1min
+	warnVolcanoSoon:Schedule(75-delay)
+	timerNetherPowerCD:Start(-delay) -- 20s variance [25-45]!
+	timerFleshCD:Start(24-delay) -- 2s variance [24-26]
+	timerFlameCD:Start(-delay) -- Fixed timer
+	timerFelLightning:Start(-delay) -- 5s variance [10-15]
+--	enrageTimer:Start(-delay)
 end
 
 function mod:OnCombatEnd()
@@ -147,12 +147,28 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnNetherPower:Show(args.sourceName)
 		specWarnNetherPower:Play("dispelboss")
 		timerNetherPowerCD:Start()
+		-- Delay events by 5s -- REVIEW!
+		timerFlameCD:AddTime(5)
+		timerFleshCD:AddTime(5)
+		timerFelLightning:AddTime(5)
+		if timerPortalCD:IsStarted() then -- to prevent method to start a 5s timer if no timer was ticking
+			timerPortalCD:AddTime(5)
+		end
+		if timerVolcanoCD:IsStarted() then -- to prevent method to start a 5s timer if no timer was ticking
+			timerVolcanoCD:AddTime(5)
+		end
 	elseif args:IsSpellID(67901, 67902, 67903, 66258) then		-- Infernal Eruption
-		timerVolcanoCD:Start()
-		warnVolcanoSoon:Schedule(110)
+--		timerVolcanoCD:Start()
+--		warnVolcanoSoon:Schedule(110)
+		-- Volcano schedules Portal in 1 minute
+		timerPortalCD:Start(60)
+		warnPortalSoon:Schedule(55)
 	elseif args:IsSpellID(66269, 67898, 67899, 67900) then		-- Nether Portal
-		timerPortalCD:Start()
-		warnPortalSoon:Schedule(110)
+--		timerPortalCD:Start()
+--		warnPortalSoon:Schedule(110)
+		-- Portal schedules Volcano in 1 minute
+		timerVolcanoCD:Start(60)
+		warnVolcanoSoon:Schedule(55)
 	elseif args:IsSpellID(66197, 68123, 68124, 68125) then		-- Legion Flame
 		timerFlameCD:Start()
 		warnFlame:Show(args.destName) -- I prefer to keep this here, rather than a player elseif on aura applied. Faster and unfiltered.
