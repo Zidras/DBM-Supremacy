@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Jaraxxus", "DBM-Coliseum")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240720194835")
+mod:SetRevision("20240720202725")
 mod:SetCreatureID(34780)
 --mod:SetMinCombatTime(30)
 mod:SetUsedIcons(7, 8)
@@ -40,7 +40,7 @@ local specWarnFelInferno		= mod:NewSpecialWarningMove(66496, nil, nil, nil, 1, 2
 local SpecWarnFelFireball		= mod:NewSpecialWarningInterrupt(66532, "HasInterrupt", nil, 2, 1, 2)
 local SpecWarnFelFireballDispel	= mod:NewSpecialWarningDispel(66532, "RemoveMagic", nil, 2, 1, 2)
 
-local timerCombatStart			= mod:NewCombatTimer(76)--roleplay for first pull
+local timerCombatStart			= mod:NewCombatTimer(70.87)--roleplay for first pull
 local timerFlame				= mod:NewTargetTimer(8, 66197, nil, nil, nil, 3)--There are 8 debuff Ids. Since we detect first to warn, use an 8sec timer to cover duration of trigger spell and damage debuff.
 local timerFlameCD				= mod:NewNextTimer(30, 66197, nil, nil, nil, 3) -- Fixed timer
 local timerNetherPowerCD		= mod:NewCDTimer(25, 67009, nil, "MagicDispeller", nil, 5, nil, DBM_COMMON_L.MAGIC_ICON, true) -- 20s variance [25-45]! Added "keep" arg
