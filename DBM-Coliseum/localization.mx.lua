@@ -58,7 +58,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	IncinerateTarget		= "Incinerar carne: %s",
-	FirstPull				= "El gran brujo Wilfred Chispobang invocará al siguiente contrincante. Esperad a que aparezca."
+	FirstPull				= "El Gran Brujo Wilfred Chispobang invocará a tu siguiente desafío. Espera su ingreso."
 })
 
 -----------------------------
@@ -161,8 +161,7 @@ L:SetMiscLocalization({
 	Fjola		= "Fjola Penívea",
 	Eydis		= "Eydis Penaumbra",
 	ValksRP		= "¡Que comiencen los juegos!", -- 35709
-	AnubRP		= "¡Se ha asestado un gran golpe al Rey Exánime! Habéis demostrado ser diestros campeones de la Cruzada Argenta. ¡Juntos atacaremos la Ciudadela de la Corona de Hielo y acabaremos con lo que queda de la Plaga! ¡No hay ningún reto al que no podamos enfrentarnos si estamos unidos!" -- esES
---	AnubRP		= "¡El Rey Exánime ha sufrido un poderoso revés! Han demostrado ser campeones dignos de la Cruzada Argenta. ¡Juntos atacaremos la Ciudadela Corona de Hielo y destruiremos lo que queda de la Plaga! ¡No existe el desafío que no podamos enfrentar unidos!"	-- esMX
+	AnubRP		= "¡El Rey Exánime ha sufrido un poderoso revés! Han demostrado ser campeones dignos de la Cruzada Argenta. ¡Juntos atacaremos la Ciudadela Corona de Hielo y destruiremos lo que queda de la Plaga! ¡No existe el desafío que no podamos enfrentar unidos!"	-- esMX
 })
 
 ---------------
@@ -192,8 +191,7 @@ L:SetMiscLocalization({
 --	YellPull				= "¡Este lugar será vuestra tumba!",
 	Emerge				= "emerge de la tierra!",
 	Burrow				= "se entierra en el suelo!",
-	YellBurrow			= "Auum na-l ak-k-k-k, isshhh. Alzaos, esbirros. Devorad…",
---	YellBurrow			= "Auum na-l ak-k-k-k, isshhh. Despierten, lacayos. Devoren…" --esMX
+	YellBurrow			= "Auum na-l ak-k-k-k, isshhh. Despierten, lacayos. Devoren…",
 	PcoldIconSet		= "Icono {rt%d} colocado en %s",
 	PcoldIconRemoved	= "Icono quitado en %s"
 })

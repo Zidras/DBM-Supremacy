@@ -111,7 +111,7 @@ L:SetMiscLocalization({
 
 	AllianceVictory		= "¡GLORIA A LA ALIANZA!",
 	--AllianceVictory	= "¡GLORIA PARA LA ALIANZA!" -- esMX
-	HordeVictory		= "Eso solo ha sido una muestra de lo que depara el futuro. ¡POR LA HORDA!"
+	HordeVictory		= "Eso solo ha sido una muestra de lo que depara el futuro. ¡POR LA HORDA!",
 	--HordeVictory		= "Eso es sólo una probada de lo que traerá el futuro. ¡POR LA HORDA!" -- esMX
 	YellKill			= "Una victoria trágica y fútil. Hoy somos menos por las pérdidas que hemos sufrido. ¿Quién podría beneficiarse de tal insensatez además del Rey Exánime? Grandes guerreros han perdido la vida. ¿Y para qué? La verdadera amenaza aguarda, el Rey Exánime nos espera a todos en la muerte."
 })
@@ -164,7 +164,6 @@ L:SetMiscLocalization({
 	Eydis		= "Eydis Penaumbra",
 	ValksRP		= "¡Que comiencen los juegos!", -- 35709
 	AnubRP		= "¡Se ha asestado un gran golpe al Rey Exánime! Habéis demostrado ser diestros campeones de la Cruzada Argenta. ¡Juntos atacaremos la Ciudadela de la Corona de Hielo y acabaremos con lo que queda de la Plaga! ¡No hay ningún reto al que no podamos enfrentarnos si estamos unidos!" -- esES
---	AnubRP		= "¡El Rey Exánime ha sufrido un poderoso revés! Han demostrado ser campeones dignos de la Cruzada Argenta. ¡Juntos atacaremos la Ciudadela Corona de Hielo y destruiremos lo que queda de la Plaga! ¡No existe el desafío que no podamos enfrentar unidos!"	-- esMX
 })
 
 ---------------
@@ -195,7 +194,6 @@ L:SetMiscLocalization({
 	Emerge				= "emerge de la tierra!",
 	Burrow				= "se entierra en el suelo!",
 	YellBurrow			= "Auum na-l ak-k-k-k, isshhh. Alzaos, esbirros. Devorad…",
---	YellBurrow			= "Auum na-l ak-k-k-k, isshhh. Despierten, lacayos. Devoren…" --esMX
 	PcoldIconSet		= "Icono {rt%d} colocado en %s",
 	PcoldIconRemoved	= "Icono quitado en %s"
 })
