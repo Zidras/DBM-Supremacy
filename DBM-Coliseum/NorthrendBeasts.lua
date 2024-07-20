@@ -599,6 +599,7 @@ end
 				timerBurningBiteCD:Start(15.4) -- (25H Lordaeron 2022/09/03 || 25N Lordaeron 2022/10/13) - 19 || 15.4
 			elseif cid == 34797 then -- Icehowl
 				self:SetStage(3)
+				timerBreathCD:Start()
 				timerNextCrash:Start(40.9) -- REVIEW!
 				self:UnregisterShortTermEvents()
 			end
@@ -611,6 +612,7 @@ end]]
 
 --[[function mod:UNIT_SPELLCAST_START(_, spellName)
 	if spellName == GetSpellInfo(66683) then -- Massive Crash
+		timerBreathCD:Cancel()
 		timerNextCrash:Start()
 	end
 end]]
@@ -627,14 +629,14 @@ end]]
 			timerParalyticSprayCD:Stop()
 			timerSlimePoolCD:Stop(acidmaw)
 			timerSweepCD:Stop(acidmaw)
-			timerEmerge:Start(7.5, UnitGUID(uId)) -- REVIEW! 3s delay from visual to emerge (25H Lordaeron 2022/09/03) - 8, 7
+			timerEmerge:Start(7.5, unitName) -- REVIEW! 3s delay from visual to emerge (25H Lordaeron 2022/09/03) - 8, 7
 		elseif npcId == 34799 then -- Dreadscale
 			timerMoltenSpewCD:Stop()
 			timerBurningBiteCD:Stop()
 			timerBurningSprayCD:Stop()
 			timerSlimePoolCD:Stop(dreadscale)
 			timerSweepCD:Stop(dreadscale)
-			timerEmerge:Start(6.5, UnitGUID(uId)) -- (25H Lordaeron 2022/09/03) - 7, 6
+			timerEmerge:Start(6.5, unitName) -- (25H Lordaeron 2022/09/03) - 7, 6
 		end
 	elseif spellName == GetSpellInfo(66947) then -- Emerge
 		local npcId = self:GetUnitCreatureId(uId)
