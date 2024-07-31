@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Deathbringer", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20230627223940")
+mod:SetRevision("20240801001629")
 mod:SetCreatureID(37813)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220905000000)
@@ -19,7 +19,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED 72385 72441 72442 72443",
 	"SPELL_SUMMON 72172 72173 72356 72357 72358",
 	"UNIT_DIED",
-	"UNIT_HEALTH boss1"
+	"UNIT_HEALTH"
 )
 
 --local canShadowmeld = select(2, UnitRace("player")) == "NightElf"
