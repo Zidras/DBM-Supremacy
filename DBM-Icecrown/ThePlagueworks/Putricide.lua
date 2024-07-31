@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 local select = select
 
-mod:SetRevision("20240611114025")
+mod:SetRevision("20240801001924")
 mod:SetCreatureID(36678)
 mod:SetUsedIcons(1, 2, 3, 4)
 mod:SetHotfixNoticeRev(20240611000000)
@@ -19,7 +19,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REFRESH 70539 72457 72875 72876 70542",
 	"SPELL_AURA_REMOVED 70447 72836 72837 72838 70672 72455 72832 72833 72855 72856 70911 71615 70539 72457 72875 72876 70542",
 	"CHAT_MSG_MONSTER_YELL",
-	"UNIT_HEALTH boss1"
+	"UNIT_HEALTH"
 --	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
@@ -249,7 +249,7 @@ function mod:SPELL_CAST_START(args)
 --			if self:IsDifficulty("heroic10") then -- Apply to both 10H and 25H (reason below)
 				-- self:Schedule(35.63, NextPhase, self) -- using longest timer found, since this is a schedule
 				self:RegisterShortTermEvents(
-					"UNIT_TARGET boss1"
+					"UNIT_TARGET"
 				)
 --			end
 		end
@@ -273,7 +273,7 @@ function mod:SPELL_CAST_START(args)
 			--self:Schedule(38.69, NextPhase, self) -- REVIEW! using longest timer found, since this is a schedule
 			--timerNextPhase:Start(38.67) -- (10H Lordaeron [2023-08-12]@[20:34:20]) - 38.67
 			self:RegisterShortTermEvents(
-				"UNIT_TARGET boss1"
+				"UNIT_TARGET"
 			)
 		end
 	end
