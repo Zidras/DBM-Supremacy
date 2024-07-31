@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Sindragosa", "DBM-Icecrown", 4)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20231118001414")
+mod:SetRevision("20240801001225")
 mod:SetCreatureID(36853)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6)
 mod:SetHotfixNoticeRev(20230528000000)
@@ -15,15 +15,14 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 70126 69762 70106 69766 70127 72528 72529 72530",
 	"SPELL_AURA_APPLIED_DOSE 70106 69766 70127 72528 72529 72530",
 	"SPELL_AURA_REMOVED 69762 70157 70106 69766 70127 72528 72529 72530",
-	"UNIT_HEALTH boss1",
+	"UNIT_HEALTH",
 	"CHAT_MSG_MONSTER_YELL"
 )
 
 local strupper = strupper
-local myRealm = select(3, DBM:GetMyPlayerInfo())
 
 -- General
-local berserkTimer				= mod:NewBerserkTimer(myRealm == "Frostmourne" and 420 or 600) -- Lordaeron hardcore berserk timer removed (Warmane Changelog November 15th 2023 )
+local berserkTimer				= mod:NewBerserkTimer(600)
 
 mod:AddBoolOption("RangeFrame", true) -- keep as BoolOption since the localization offers important information regarding boss ability and player debuff behaviour (Unchained Magic is Heroic only)
 mod:AddBoolOption("ClearIconsOnAirphase", true) -- don't group with any spellId, it applies to all raid icons
@@ -179,9 +178,9 @@ local function ResetRange(self)
 	end
 end
 
--- Warmane workaround, since there is no dedicated event for Sindragosa Landing Phase, and UNIT_TARGET boss1 only fires if Sindragosa is targeted or focused (sync'ed below)
+-- Timed, since there is no dedicated event for Sindragosa Landing Phase, and UNIT_TARGET only fires if Sindragosa is targeted or focused (sync'ed below)
 local function landingPhaseWorkaround(self, timeOffset)
-	DBM:Debug("UNIT_TARGET boss1 didn't fire. Landing Phase scheduled")
+	DBM:Debug("UNIT_TARGET didn't fire. Landing Phase scheduled")
 	self:SetStage(1)
 	timerNextAirphase:Start(-timeOffset)
 	timerUnchainedMagic:Start(10-timeOffset)
@@ -387,9 +386,10 @@ function mod:UNIT_HEALTH(uId)
 end
 
 function mod:UNIT_TARGET(uId)
+	if self:GetUnitCreatureId(uId) ~= 36853 then return end
 	-- Attempt to catch when she lands by checking for Sindragosa's target being a raid member
 	if UnitExists(uId.."target") then
-		self:SendSync("SindragosaLanded") -- Sync landing with raid since UNIT_TARGET:boss1 event requires Sindragosa to be target/focus, which not all members do
+		self:SendSync("SindragosaLanded") -- Sync landing with raid since UNIT_TARGET event requires Sindragosa to be target/focus, which not all members do
 	end
 end
 
@@ -408,7 +408,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		warnGroundphaseSoon:Schedule(37.5)
 		self:Schedule(45.2, landingPhaseWorkaround, self, 1) -- giving a 0.2s cushion from 45s (max I have on logs is 45.1s). 1s comes from 45.2-44.2s from ground timer
 		self:RegisterShortTermEvents(
-			"UNIT_TARGET boss1"
+			"UNIT_TARGET"
 		)
 	elseif (msg == L.YellPhase2 or msg:find(L.YellPhase2)) or (msg == L.YellPhase2Dem or msg:find(L.YellPhase2Dem)) then
 		self:SetStage(2)
