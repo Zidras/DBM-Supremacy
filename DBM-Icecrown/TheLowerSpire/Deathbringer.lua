@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Deathbringer", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240802000604")
+mod:SetRevision("20240802003640")
 mod:SetCreatureID(37813)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20220905000000)
@@ -22,8 +22,8 @@ mod:RegisterEventsInCombat(
 	"UNIT_HEALTH"
 )
 
---local canShadowmeld = select(2, UnitRace("player")) == "NightElf"
---local canVanish = select(2, UnitClass("player")) == "ROGUE"
+local canShadowmeld = select(2, UnitRace("player")) == "NightElf"
+local canVanish = select(2, UnitClass("player")) == "ROGUE"
 
 -- General
 local timerCombatStart		= mod:NewCombatTimer(81.1)
@@ -50,7 +50,7 @@ local timerRuneofBlood		= mod:NewCDTimer(20, 72410, nil, "Tank|Healer", nil, 5, 
 local timerBoilingBlood		= mod:NewCDTimer(15, 72385, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON, true) -- 5s variance [15-20]. Added "keep" arg
 local timerBloodNova		= mod:NewCDTimer(20, 72378, nil, nil, nil, 2, nil, nil, true) -- 5s variance [20-25]. Added "keep" arg
 
---local soundSpecWarnMark		= mod:NewSound(72293, nil, canShadowmeld or canVanish)
+local soundSpecWarnMark		= mod:NewSound(72293, nil, canShadowmeld or canVanish)
 
 mod:AddRangeFrameOption(12, 72378, "Ranged")
 mod:AddInfoFrameOption(72370, false)--Off by default, since you can literally just watch the bosses power bar
@@ -99,7 +99,7 @@ do	-- add the additional Rune Power Bar
 	end
 end
 
---[[function mod:FallenMarkTarget(targetname)
+function mod:FallenMarkTarget(targetname)
 	if not targetname then return end
 	if targetname == UnitName("player") then
 		if canShadowmeld then
@@ -108,7 +108,7 @@ end
 			soundSpecWarnMark:Play("Interface\\AddOns\\DBM-Core\\sounds\\PlayerAbilities\\Vanish.ogg")
 		end
 	end
-end]]
+end
 
 function mod:OnCombatStart(delay)
 	if self.Options.RunePowerFrame then
@@ -154,8 +154,8 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(73058, 72378) then	-- Blood Nova (only 2 cast IDs, 4 spell damage IDs, and one dummy)
 		warnBloodNova:Show()
 		timerBloodNova:Start()
---	elseif args.spellId == 72293 then
---		self:BossTargetScanner(37813, "FallenMarkTarget", 0.01, 10)
+	elseif args.spellId == 72293 then
+		self:BossTargetScanner(37813, "FallenMarkTarget", 0.01, 10)
 	end
 end
 
