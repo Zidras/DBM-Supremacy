@@ -106,7 +106,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	RunePower = "鲜血能量",
-	PullAlliance = "你每消灭一名部落士兵，或是杀死一只联盟狗。巫妖王的军力就会增长一分。瓦格里正在把你们的阵亡者变为天灾战士。",
+	PullAlliance = "那我们要行动了，我们要……", -- 37457
 	PullHorde = "库卡隆，行动！勇士们，提高警惕。天灾军团已经……"
 })
 

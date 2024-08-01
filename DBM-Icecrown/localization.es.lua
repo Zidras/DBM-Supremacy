@@ -109,7 +109,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	RunePower			= "Poder de sangre",
-	PullAlliance		= "Por cada soldado de la Horda que matasteis... Por cada perro de la Alianza que cayó, el ejército del Rey Exánime creció. Ahora, hasta las Val'kyr alzan a los caídos para la Plaga.",
+	PullAlliance		= "¡Entonces movámonos! ¡Sali...!", -- 37457
 	PullHorde			= "¡Kor'kron, vámonos! Campeones, vigilad vuestra retaguardia. La Plaga ha sido..."
 })
 

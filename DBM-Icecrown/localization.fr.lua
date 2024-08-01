@@ -109,7 +109,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	RunePower			= "Bêtes de sang",
-	PullAlliance		= "Bon allez, on se bouge",
+	PullAlliance		= "Bon allez, on se bouge ! En route -", -- 37457
 	PullHorde			= "Kor'krons, en route ! Champions, surveillez bien vos arrières. Le Fléau a été -"
 })
 

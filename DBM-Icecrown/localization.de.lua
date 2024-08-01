@@ -109,7 +109,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	RunePower			= "Blutmacht",
-	PullAlliance		= "Mit jedem Krieger der Horde, den Ihr getötet habt, mit jedem dieser Allianzhunde, der fiel, wuchsen die Armeen des Lichkönigs. Selbst in diesem Moment erwecken die Val'kyr Eure Gefallenen als Diener der Geißel.",
+	PullAlliance		= "Dann beeilen wir uns! Brechen wir au...", -- 37457
 	PullHorde			= "Kor'kron, Aufbruch! Champions, gebt Acht. Die Geißel ist..."
 })
 
