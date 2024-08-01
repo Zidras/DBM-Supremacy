@@ -40,17 +40,18 @@ L:SetOptionLocalization({
 	ShieldHealthFrame			= "Zeige Bossleben mit einer Leiste für $spell:70842",
 	SoundWarnCountingMC			= "5 Sekunden Cooldown abspielen für Gedankenkontrolle",
 --	RemoveDruidBuff				= "Entferne $spell:48469 / $spell:48470 24 Sekunden nach Kampfbeginn",
-	RemoveBuffsOnMC				= "Entferne Buffs, wenn $spell:71289 auf dich gewirkt wird. Jede Option ist komulativ.",
+	RemoveBuffsOnMC				= "Entferne Buffs, wenn $spell:71289 gewirkt wird. Jede Option ist komulativ.",
 	Gift						= "+ Entferne $spell:48469 / $spell:48470. Notwendig, um $spell:33786 nicht zu widerstehen.",
 	CCFree						= "+ Entferne $spell:48169 / $spell:48170. Berücksichtige die Widerstände von Zaubern der Schattenschule.",
 	ShortOffensiveProcs			= "+ Entferne offensive Procs, die eine geringe Dauer haben. Empfohlen für die Sicherheit des Schlachtzugs, ohne Auswirkungen auf den Gesamtschaden des Raids",
 	MostOffensiveBuffs			= "+ Entfernt die meisten offensiven Buffs (hauptsächlich für Zauberwirkende und Wilder-Kampf Druiden. Maximale Schlachtzugsicherheit, Maximale Schadensreduktion, benötigt selbstständiges rebuffen/gestaltenwechsel",
-	EqUneqWeapons				= "Be-/Entwaffnen, wenn $spell:71289 auf MICH wirkt. Funktioniert nur, wenn ein Ausrüstungsset mit dem Namen \"pve\" existiert (mit angelegten Waffen).",
+	EqUneqWeapons				= "Be-/Entwaffnen, wenn $spell:71289 gewirkt wird. Funktioniert nur, wenn ein Ausrüstungsset mit dem Namen \"pve\" existiert (mit angelegten Waffen).",
 	EqUneqTimer					= "Entwaffnen IMMER nach Timer, nicht erst bei Gedankenkontrolle (bei höherer Latenz). Die obere Funktion muss aktiviert sein"
 })
 
 L:SetMiscLocalization({
 	YellReanimatedFanatic	= "Erhebt Euch und frohlocket ob Eurer reinen Form!",
+	YellDominateMind		= "Ihr seid schwach, unfähig, meinem Willen zu widerstehen!",
 	ShieldPercent			= "Manabarriere", --Translate Spell id 70842
 --	Fanatic1				= "Fanatischer Kultist",
 --	Fanatic2				= "Deformierter Fanatiker",

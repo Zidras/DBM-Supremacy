@@ -40,17 +40,18 @@ L:SetOptionLocalization({
 	ShieldHealthFrame			= "Montre la vie du boss avec une barre de vie pour la $spell:70842",
 	SoundWarnCountingMC			= "Jouer un son à 5 secondes du Contrôle mental",
 --	RemoveDruidBuff				= "Retire $spell:48469 / $spell:48470 24 secondes après le début du combat",
-	RemoveBuffsOnMC				= "Retirez les buffs lorsque $spell:71289 est lancé sur vous. Chaque option est cumulative.",
+	RemoveBuffsOnMC				= "Retirez les buffs lorsque $spell:71289 est lancé. Chaque option est cumulative.",
 	Gift						= "Supprimer $spell:48469 / $spell:48470. Approche minimale pour éviter $spell:33786 résistances.",
 	CCFree						= "+ Supprimer $spell:48169 / $spell:48170. Tient compte des résistances des sorts de l'école de l'ombre.",
 	ShortOffensiveProcs			= "+ Supprimer les procs offensifs qui ont une faible durée. Recommandé pour la sécurité du raid sans compromettre les dégâts du raid.",
 	MostOffensiveBuffs			= "+ Supprimer la plupart des buffs offensifs (principalement pour les Casters et les |cFFFF7C0AFarouche Druide|r). Sécurité maximale pour les raids avec une perte de dégâts et la nécessité de s'auto-rebuffer/shapeshift!",
-	EqUneqWeapons				= "Retire/équipe les armes si le $spell:71289 est lancé sur vous. Pour que cela fonctionne, créez un set appellé \"pve\".",
+	EqUneqWeapons				= "Retire/équipe les armes si le $spell:71289 est lancé. Pour que cela fonctionne, créez un set appellé \"pve\".",
 	EqUneqTimer					= "Retire les armes à CHAQUE fois selon le timer (si votre ping est élevé). L'option de dessus doit être active."
 })
 
 L:SetMiscLocalization({
 	YellReanimatedFanatic	= "Lève-toi, dans l'exultation de cette nouvelle pureté",
+	YellDominateMind		= "Vous êtes faibles, impuissants devant ma volonté !",
 	ShieldPercent			= "Barrière de mana",
 --	Fanatic1				= "Membres du culte",
 --	Fanatic2				= "Fanatique déformé",

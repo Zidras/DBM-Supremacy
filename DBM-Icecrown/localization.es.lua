@@ -40,17 +40,18 @@ L:SetOptionLocalization({
 	ShieldHealthFrame			= "Mostrar barra de vida del boss con una barra de vida para $spell:70842",
 	SoundWarnCountingMC			= "Play a 5 second audio countdown for Mind Control", --Needs Translating
 --	RemoveDruidBuff				= "Quitar $spell:48469 / $spell:48470 24 segundos después de la pelea",
-	RemoveBuffsOnMC				= "Elimina los buffs cuando $spell:71289 es lanzado sobre ti. Cada opción es acumulativa",
+	RemoveBuffsOnMC				= "Elimina los buffs cuando $spell:71289 es lanzado. Cada opción es acumulativa",
 	Gift						= "Eliminar $spell:48469 / $spell:48470. Enfoque mínimo para evitar que $spell:33786 se resista",
 	CCFree						= "+ Eliminar $spell:48169 / $spell:48170. Tener en cuenta las resistencias de los hechizos de la escuela Sombra",
 	ShortOffensiveProcs			= "+ Elimina los procs ofensivos de baja duración. Recomendado para la seguridad de la raid sin comprometer la producción de daño de la raid",
 	MostOffensiveBuffs			= "+ Elimina la mayoría de los buffs ofensivos (principalmente para los Casters y los |cFFFF7C0ADruidas Ferales|r). Máxima seguridad en la incursión con la pérdida de daño y la necesidad de auto-buff/cambio de forma",
-	EqUneqWeapons				= "Desequipar/equipar armas si se lanza $spell:71289 sobre ti. Para que el equipo funcione, cree un gestor de equipamiento llamado \"pve\".",
+	EqUneqWeapons				= "Desequipar/equipar armas si se lanza $spell:71289. Para que el equipo funcione, cree un gestor de equipamiento llamado \"pve\".",
 	EqUneqTimer					= "Retirar las armas con el temporizador SIEMPRE, no en el lanzamiento (si el ping es alto). La opción anterior debe estar habilitada.",
 })
 
 L:SetMiscLocalization({
 	YellReanimatedFanatic	= "¡Álzate y goza de tu verdadera forma!",
+	YellDominateMind		= "¡Eres frágil y débil para resistirte a mi voluntad!",
 	ShieldPercent			= "Barrera de maná",
 --	Fanatic1				= "Fanático del Culto",
 --	Fanatic2				= "Fanático deformado",

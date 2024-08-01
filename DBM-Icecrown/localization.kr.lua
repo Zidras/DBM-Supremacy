@@ -45,12 +45,13 @@ L:SetOptionLocalization({
 	CCFree						= "+ $spell:48169 / $spell:48170을 제거합니다. 그림자 학교의 주문 저항을 설명합니다.",
 	ShortOffensiveProcs			= "+ 지속 시간이 짧은 공격 절차를 제거합니다. 공격대 피해 출력을 손상시키지 않으면서 공격대 안전을 위해 권장됩니다.",
 	MostOffensiveBuffs			= "+ 대부분의 공격 버프를 제거합니다(주로 캐스터 및 |cFFFF7C0A야성 드루이드|r용). 손상 출력 손실로 최대 레이드 안전 및 자체 버프/변형이 필요합니다!",
-	EqUneqWeapons				= "Unequip/equip weapons if $spell:71289 is cast on you. For equipping to work, create a COMPLETE (with the weapons of choice that will be equipped) equipment set named \"pve\".", --Needs Translating
-	EqUneqTimer					= "Remove weapons by timer ALWAYS, not on cast (if ping is high). The option above must be enabled." --Needs Translating
+--	EqUneqWeapons				= "Unequip/equip weapons if $spell:71289 is cast on you. For equipping to work, create a COMPLETE (with the weapons of choice that will be equipped) equipment set named \"pve\".", --Needs Translating
+--	EqUneqTimer					= "Remove weapons by timer ALWAYS, not on cast (if ping is high). The option above must be enabled." --Needs Translating
 })
 
 L:SetMiscLocalization({
 	YellReanimatedFanatic	= "일어나라, 순수한 모습을 기뻐하라!",
+	YellDominateMind		= "내 의지에 저항하기에는 나약하고 무능하구나!",
 	ShieldPercent			= "마나 방벽",
 --	Fanatic1				= "교단 광신자",
 --	Fanatic2				= "변형된 광신자",

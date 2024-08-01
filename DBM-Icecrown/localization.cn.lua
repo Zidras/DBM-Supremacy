@@ -38,17 +38,18 @@ L:SetOptionLocalization({
 	ShieldHealthFrame = "显示 Boss 血条，并为 $spell:70842 显示专门血条", -- Modified by Emi
 	SoundWarnCountingMC = "为心灵控制播放5秒声音倒数", -- Modified by Emi
 --	RemoveDruidBuff = "Remove $spell:48469 / $spell:48470 24 seconds into the fight",
-	RemoveBuffsOnMC = "当$spell:71289对你施法时，移除BUFF。每个选项都是累积的。",
+	RemoveBuffsOnMC = "当施放$spell:71289时，移除BUFF。每个选项都是累积的。",
 	Gift = "移除$spell:48469 / $spell:48470。防止$spell:33786抵制的最简单方法。",
 	CCFree = "+ 删除$spell:48169 / $spell:48170。考虑到阴影法术的抵抗。", -- Modified by Emi
 	ShortOffensiveProcs = "+ 删除持续时间短的攻击性程序。建议在不影响突击队伤害输出的情况下保证团队的安全。", -- Modified by Emi
 	MostOffensiveBuffs = "+ 移除大部分攻击性BUFF（主要针对施法者和|cFFFF7C0A野性德鲁伊|r）。在损失伤害输出和需要自我补血/移形换影的情况下，最大限度地保证了团队的安全！", -- Modified by Emi
-	EqUneqWeapons = "如果$spell:71289 对你施放，自动卸下/装备武器。要使这一功能正常工作，请创建一个名为\"pve\"的完整套装（要包含你需要装备的武器）。", -- Modified by Emi
+	EqUneqWeapons = "如果施放了$spell:71289，自动卸下/装备武器。要使这一功能正常工作，请创建一个名为\"pve\"的完整套装（要包含你需要装备的武器）。", -- Modified by Emi
 	EqUneqTimer = "不论目标是否是你，总是按照心控计时卸下/装备武器（建议在高延迟时使用）。必须在前一选项开启的情况下使用。" -- Modified by Emi
 })
 
 L:SetMiscLocalization({
 	YellReanimatedFanatic = "来吧，为纯粹的形态欢喜吧！",
+	YellDominateMind = "软弱的你抵挡不了我强大的意志！",
 --	Fanatic1 = "教派狂热者",
 --	Fanatic2 = "畸形的狂热者",
 --	Fanatic3 = "被复活的狂热者",

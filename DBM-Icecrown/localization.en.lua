@@ -38,13 +38,13 @@ L:SetOptionLocalization({
 	ShieldHealthFrame			= "Show boss health with a health bar for $spell:70842",
 	SoundWarnCountingMC			= "Play a 5 second audio countdown for Mind Control",
 --	RemoveDruidBuff				= "Remove $spell:48469 / $spell:48470 24 seconds into the fight",
-	RemoveBuffsOnMC				= "Remove buffs when $spell:71289 is cast on you. Each option is cumulative.",
+	RemoveBuffsOnMC				= "Remove buffs when $spell:71289 is cast. Each option is cumulative.",
 	Never						= NEVER, -- don't translate
 	Gift						= "Remove $spell:48469 / $spell:48470. Minimal approach to prevent $spell:33786 resists.",
 	CCFree						= "+ Remove $spell:48169 / $spell:48170. Account for resists of spells in the Shadow school.",
 	ShortOffensiveProcs			= "+ Remove offensive procs that have a low duration. Recommended for raid safety without compromising raid damage output.",
 	MostOffensiveBuffs			= "+ Remove most offensive buffs (mainly for Casters and |cFFFF7C0AFeral Druids|r). Maximum raid safety with loss of damage output and need to self-rebuff/shapeshift!",
-	EqUneqWeapons				= "Unequip/equip weapons if $spell:71289 is cast on you. For equipping to work, create a COMPLETE (with the weapons of choice that will be equipped) equipment set named \"pve\".",
+	EqUneqWeapons				= "Unequip/equip weapons if $spell:71289 is cast. For equipping to work, create a COMPLETE (with the weapons of choice that will be equipped) equipment set named \"pve\".",
 	EqUneqTimer					= "Remove weapons by timer ALWAYS, not on cast (if ping is high). The option above must be enabled.",
 	EqUneqFilter				= FILTER, -- don't translate
 	OnlyDPS						= DBM_COMMON_L.DAMAGE_ICON, -- don't translate
@@ -54,6 +54,7 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	YellReanimatedFanatic	= "Arise, and exult in your pure form!",
+	YellDominateMind		= "You are weak, powerless to resist my will!",
 	ShieldPercent			= "Mana Barrier",--Translate Spell id 70842
 --	Fanatic1				= "Cult Fanatic",
 --	Fanatic2				= "Deformed Fanatic",
