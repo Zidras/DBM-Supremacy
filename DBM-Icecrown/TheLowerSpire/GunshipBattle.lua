@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("GunshipBattle", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20230627225738")
+mod:SetRevision("20240801225802")
 local addsIcon
 local bossID
 mod:RegisterCombat("combat")
@@ -42,7 +42,7 @@ local warnBladestorm		= mod:NewSpellAnnounce(69652, 3, nil, "Melee")
 local warnWoundingStrike	= mod:NewTargetNoFilterAnnounce(69651, 2)
 local warnAddsSoon			= mod:NewAnnounce("WarnAddsSoon", 2, addsIcon)
 
-local timerCombatStart		= mod:NewCombatTimer(47.5)
+local timerCombatStart		= mod:NewCombatTimer(47.58) -- YELL-IEEU : 43.25-90.83
 local timerBelowZeroCD		= mod:NewNextTimer(35, 69705, nil, nil, nil, 5, nil, DBM_COMMON_L.DAMAGE_ICON, nil, 1)
 local timerBattleFuryActive	= mod:NewBuffActiveTimer(17, 69638, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerAdds				= mod:NewTimer(60, "TimerAdds", addsIcon, nil, nil, 1)
