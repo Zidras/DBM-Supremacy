@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 local UnitGUID = UnitGUID
 
-mod:SetRevision("20240804185315")
+mod:SetRevision("20240804193535")
 mod:SetModelID(37007)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod.isTrashMod = true
@@ -18,6 +18,7 @@ mod:RegisterEvents(
 	"SPELL_MISSED 70305",
 	"UNIT_DIED",
 	"UNIT_TARGET", -- currently unfiltered due to CORE not defaulting legacy uIds. Review valkyr code below if Core is changed
+	"UNIT_SPELLCAST_SUCCEEDED", -- currently unfiltered due to CORE not defaulting legacy uIds. Review valkyr code below if Core is changed
 	"CHAT_MSG_MONSTER_YELL"
 )
 
@@ -57,7 +58,7 @@ local timerDisruptingShout		= mod:NewCastTimer(3, 71022, nil, nil, nil, 2)
 local timerDarkReckoning		= mod:NewTargetTimer(8, 69483, nil, nil, nil, 5)
 local timerDeathPlague			= mod:NewTargetTimer(15, 72865, nil, nil, nil, 3)
 --Plagueworks
-local timerSeveredEssence		= mod:NewNextTimer(35.5, 71942, nil, nil, nil, 1, nil, nil, true) -- REVIEW! 5s variance [35.5-40.5]. Added "keep" arg, but could be a bad idea!  (25H Lordaeron [2023-08-19]@[11:49:20] || 25H Lordaeron [2023-08-27]@[10:41:16]) - 36.0 || 40.49; 35.51
+local timerSeveredEssence		= mod:NewNextTimer(25, 71942, nil, nil, nil, 1, nil, nil, nil, 1, 3) -- Fixed timer (if casted): 25s; else 5s. Added voice countdown (3s)
 local timerZombies				= mod:NewCDTimer(20, 71159, nil, nil, nil, 1) -- 5s variance [20-25]
 local timerMortalWound			= mod:NewTargetTimer(15, 71127, nil, nil, nil, 5)
 local timerDecimate				= mod:NewCDTimer(20, 71123, nil, nil, nil, 2) -- 5s variance [20-25]. Not using "keep" arg since it is quite tricky to account for timer deactivation on OOR players (would require syncs) and variance isn't that huge
@@ -81,6 +82,8 @@ mod:AddSetIconOption("BloodMirrorIcon", 70451, false, 0, {2})
 local valkyrHeraldGUID = {}
 local eventProfessorStarted = false
 
+local severedEssenceName = DBM:GetSpellInfo(71906)
+
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 71022 then
@@ -96,6 +99,7 @@ function mod:SPELL_CAST_START(args)
 		warnDecimateSoon:Schedule(28)
 		timerDecimate:Start()
 	elseif spellId == 71942 then
+		DBM:AddMsg("Severed Essence SPELL_CAST_START, spellId 71942, fixed on server script. Notify Zidras on Discord or GitHub")
 		local sourceGUID = args.sourceGUID
 		valkyrHeraldGUID[sourceGUID] = true
 		specWarnSeveredEssence:Show()
@@ -249,6 +253,17 @@ do
 	end
 end
 
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName)
+	if spellName == severedEssenceName then -- Severed Essence
+		local sourceGUID = UnitGUID(uId)
+		if self:AntiSpam(2, sourceGUID) then
+			valkyrHeraldGUID[sourceGUID] = true
+			specWarnSeveredEssence:Show()
+			timerSeveredEssence:Start(sourceGUID)
+		end
+	end
+end
+
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if (msg == L.WarderTrap1 or msg == L.WarderTrap2 or msg == L.WarderTrap3) and self:LatencyCheck() then
 		self:SendSync("WarderTrap")
@@ -268,7 +283,7 @@ function mod:OnSync(msg, guid)
 		specWarnGosaEvent:Show()
 	elseif msg == "ValkyrAggro" and guid then
 		valkyrHeraldGUID[guid] = true
-		timerSeveredEssence:Start(8, guid) -- REVIEW! variance [8-10]? On Warmane, based on aggro, touchdown or swing?
+		timerSeveredEssence:Start(10, guid) -- Scheduled 10s after JustEngagedWith (Val'kyr Herald goes active and targets a player)
 	elseif msg == "ValkyrDeaggro" and guid then
 		valkyrHeraldGUID[guid] = nil
 		timerSeveredEssence:Cancel(guid)
