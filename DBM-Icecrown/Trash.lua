@@ -3,14 +3,14 @@ local L		= mod:GetLocalizedStrings()
 
 local UnitGUID = UnitGUID
 
-mod:SetRevision("20230827102611")
+mod:SetRevision("20240804184235")
 mod:SetModelID(37007)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod.isTrashMod = true
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 71022 71088 71123 71942",
-	"SPELL_AURA_APPLIED 69483 72865 71127 70451 70432 70645 71785 71298 70475",
+	"SPELL_AURA_APPLIED 69483 72865 71127 70451 70432 70645 71785 71298 70475 71805",
 	"SPELL_AURA_APPLIED_DOSE 71127",
 	"SPELL_AURA_REMOVED 70451 70432 70645 71785 71298",
 	"SPELL_SUMMON 71159",
@@ -60,7 +60,7 @@ local timerDeathPlague			= mod:NewTargetTimer(15, 72865, nil, nil, nil, 3)
 local timerSeveredEssence		= mod:NewNextTimer(35.5, 71942, nil, nil, nil, 1, nil, nil, true) -- REVIEW! 5s variance [35.5-40.5]. Added "keep" arg, but could be a bad idea!  (25H Lordaeron [2023-08-19]@[11:49:20] || 25H Lordaeron [2023-08-27]@[10:41:16]) - 36.0 || 40.49; 35.51
 local timerZombies				= mod:NewNextTimer(20, 71159, nil, nil, nil, 1)
 local timerMortalWound			= mod:NewTargetTimer(15, 71127, nil, nil, nil, 5)
-local timerDecimate				= mod:NewNextTimer(33, 71123, nil, nil, nil, 2)
+local timerDecimate				= mod:NewCDTimer(20, 71123, nil, nil, nil, 2) -- 5s variance [20-25]. Not using "keep" arg since it is quite tricky to account for timer deactivation on OOR players (would require syncs) and variance isn't that huge
 local timerBlightBomb			= mod:NewCastTimer(5, 71088, nil, nil, nil, 3)
 local timerProfessorEvent		= mod:NewRPTimer(90, 70475, nil, nil, nil, 2)
 --Crimson Hall
@@ -153,6 +153,8 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 70475 and not eventProfessorStarted then -- Giant Insect Swarm
 		eventProfessorStarted = true
 		timerProfessorEvent:Start()
+	elseif spellId == 71805 then -- Plague Stench (Stinky engaged)
+		timerDecimate:Start() -- 5s variance (20-25)
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
