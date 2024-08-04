@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 local UnitGUID = UnitGUID
 
-mod:SetRevision("20240804193535")
+mod:SetRevision("20240804204526")
 mod:SetModelID(37007)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod.isTrashMod = true
@@ -63,7 +63,7 @@ local timerZombies				= mod:NewCDTimer(20, 71159, nil, nil, nil, 1) -- 5s varian
 local timerMortalWound			= mod:NewTargetTimer(15, 71127, nil, nil, nil, 5)
 local timerDecimate				= mod:NewCDTimer(20, 71123, nil, nil, nil, 2) -- 5s variance [20-25]. Not using "keep" arg since it is quite tricky to account for timer deactivation on OOR players (would require syncs) and variance isn't that huge
 local timerBlightBomb			= mod:NewCastTimer(5, 71088, nil, nil, nil, 3)
-local timerProfessorEvent		= mod:NewRPTimer(90, 70475, nil, nil, nil, 2)
+local timerProfessorEvent		= mod:NewRPTimer(60, 70475, nil, nil, nil, 2) -- 1min: ACTION_START_GAUNTLET - EVENT_GAUNTLET_PHASE2
 --Crimson Hall
 local timerBloodMirror			= mod:NewTargetTimer(30, 70451, nil, "Healer|Tank", nil, 5)
 local timerBloodSap				= mod:NewTargetTimer(8, 70432, nil, "Healer|Tank", nil, 5)
