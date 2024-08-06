@@ -182,6 +182,8 @@ L:SetTimerLocalization({
 })]]
 
 L:SetMiscLocalization({
+	HeroicIntermission		= "Два слизнюка в одной комнате... Может получиться что-то любопытное!",
+	MalleableGooCastEmote	= "вязкую жижу", -- |TInterface\Icons\inv_misc_herb_evergreenmoss.blp:16|t %s разливает |cFF00FF00вязкую жижу!|r
 	YellTransform1			= "Хм, что-то я ничего не чувствую. Что?! Это еще откуда?",
 	YellTransform2			= "На вкус, как вишенка! ОЙ! Извиниите!"
 })

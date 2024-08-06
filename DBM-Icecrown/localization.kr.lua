@@ -180,6 +180,8 @@ L:SetTimerLocalization({
 })]]
 
 L:SetMiscLocalization({
+	HeroicIntermission		= "수액괴물 둘이 방 하나에 있네요. 짜잔! 정말 재미있겠지요?",
+	MalleableGooCastEmote	= "유연한 끈적이", -- |TInterface\Icons\inv_misc_herb_evergreenmoss.blp:16|t%s|1이;가; |cFF00FF00유연한 끈적이|r를 시전합니다!
 	YellTransform1			= "흠, 아무 느낌도 없군요. 엥?! 이건 어디서 온 거지요?",
 	YellTransform2			= "이 맛은... 체리군요! 오! 이런 실례!"
 })

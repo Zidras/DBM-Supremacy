@@ -180,6 +180,8 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	HeroicIntermission		= "Zwei Schleime, ein Raum. So viele reizende Möglichkeiten!",
+	MalleableGooCastEmote	= "Formbarer Glibber", -- |TInterface\Icons\inv_misc_herb_evergreenmoss.blp:16|t %s wirkt |cFF00FF00'Formbarer Glibber'!|r
 	YellTransform1			= "Hm, ich spüre gar nichts. Nanu?! Wo kommen die denn her?",
 	YellTransform2			= "Schmeckt nach... Kirsche! OH! Verzeihung!"
 })

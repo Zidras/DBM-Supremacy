@@ -174,12 +174,14 @@ L:SetTimerLocalization({
 	TimerReengage			= "Reatracción"
 })
 
---[[L:SetOptionLocalization({
-	WarnReengage			= "Show warning for Boss re-engage", -- needs localization
-	TimerReengage			= "Show timer for Boss re-engage" -- needs localization
-})]]
+L:SetOptionLocalization({
+	WarnReengage			= "Mostrar aviso cuando el Jefe reinicia combate",
+	TimerReengage			= "Mostrar temporizador para Jefe reiniciar combate"
+})
 
 L:SetMiscLocalization({
+	HeroicIntermission		= "Dos mocos, una sala. ¡Tantas posibilidades estupendas!",
+	MalleableGooCastEmote	= "Moco maleable", -- |TInterface\Icons\inv_misc_herb_evergreenmoss.blp:16|t ¡%s lanza |cFF00FF00Moco maleable!|r
 	YellTransform1			= "Mmm, no siento nada. ¿¡Qué!? ¿De dónde salió eso?",
 	YellTransform2			= "¡Sabe a... fresa! ¡Ups! Perdón."
 })

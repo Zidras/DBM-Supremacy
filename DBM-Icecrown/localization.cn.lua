@@ -177,6 +177,8 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	HeroicIntermission		= "两泥，一室。会有无限惊喜哦！",
+	MalleableGooCastEmote	= "可延展黏液", -- |TInterface\Icons\inv_misc_herb_evergreenmoss.blp:16|t%s施放了|cFF00FF00可延展黏液！|r
 	YellTransform1 = "嗯，什么感觉也没有。什么？！这是哪儿来的？",
 	YellTransform2 = "味道像……樱桃！哦！见笑了！"
 })

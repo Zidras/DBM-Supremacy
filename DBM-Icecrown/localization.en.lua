@@ -185,6 +185,8 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	HeroicIntermission		= "Two oozes, one room. So many delightful possibilities!",
+	MalleableGooCastEmote	= "Malleable Goo", -- |TInterface\Icons\inv_misc_herb_evergreenmoss.blp:16|t%s cast |cFF00FF00Malleable Goo!|r
 	YellTransform1			= "Hrm, I don't feel a thing. Wha?! Where'd those come from?",
 	YellTransform2			= "Tastes like... Cherry! OH! Excuse me!"
 })

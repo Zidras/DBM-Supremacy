@@ -1,9 +1,7 @@
 local mod	= DBM:NewMod("Putricide", "DBM-Icecrown", 2)
 local L		= mod:GetLocalizedStrings()
 
-local select = select
-
-mod:SetRevision("20240801001924")
+mod:SetRevision("20240806233437")
 mod:SetCreatureID(36678)
 mod:SetUsedIcons(1, 2, 3, 4)
 mod:SetHotfixNoticeRev(20240611000000)
@@ -18,15 +16,14 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED_DOSE 72451 72463 72671 72672 70542",
 	"SPELL_AURA_REFRESH 70539 72457 72875 72876 70542",
 	"SPELL_AURA_REMOVED 70447 72836 72837 72838 70672 72455 72832 72833 72855 72856 70911 71615 70539 72457 72875 72876 70542",
+	"SPELL_SUMMON 70342",
 	"CHAT_MSG_MONSTER_YELL",
+	"CHAT_MSG_RAID_BOSS_EMOTE",
 	"UNIT_HEALTH"
---	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
-local myRealm = select(3, DBM:GetMyPlayerInfo())
-
 -- General
-local berserkTimer					= mod:NewBerserkTimer((myRealm == "Lordaeron" or myRealm == "Frostmourne") and (mod:IsDifficulty("normal25") and 450 or 480) or 600)
+local berserkTimer					= mod:NewBerserkTimer(600)
 
 -- buffs from "Drink Me"
 local timerMutatedSlash				= mod:NewTargetTimer(20, 70542, nil, false, nil, 5, nil, DBM_COMMON_L.TANK_ICON)
@@ -50,8 +47,8 @@ local yellUnboundPlague				= mod:NewYellMe(70911, false)	-- Heroic Ability, disa
 
 local timerGaseousBloat				= mod:NewTargetTimer(20, 70672, nil, nil, nil, 3)			-- Duration of debuff
 local timerGaseousBloatCast			= mod:NewCastTimer(3, 70672, nil, nil, nil, 3)				-- Cast duration
-local timerSlimePuddleCD			= mod:NewCDTimer(35, 70341, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)				-- Approx
-local timerUnstableExperimentCD		= mod:NewCDTimer(35, 70351, nil, nil, nil, 1, nil, DBM_COMMON_L.DEADLY_ICON, true) -- 5s variance [35-40]. Added "keep" arg (10N Icecrown 2022/08/20 || 10N Icecrown 2022/08/25 || 10H Lordaeron 2022/09/02 || 25H Lordaeron 2022/09/04) - 39.1, 38.0 || 39.1, 38.0 || Stage 1/30.7, 36.2 ; Stage 1/33.9, 67.6, Stage 2/2.1, 36.5/38.6, 36.7; Stage 1/30.5, 35.7, Stage 2/41.6 || Stage 1/30.5, 68.3, Stage 2/4.9, 32.8/37.7, 37.7
+local timerSlimePuddleCD			= mod:NewNextTimer(35, 70341, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON) -- Fixed timer: 35s
+local timerUnstableExperimentCD		= mod:NewCDTimer(35, 70351, nil, nil, nil, 1, nil, DBM_COMMON_L.DEADLY_ICON, true) -- 5s variance [35-40]. Added "keep" arg
 local timerUnboundPlagueCD			= mod:NewNextTimer(90, 70911, nil, nil, nil, 3, nil, DBM_COMMON_L.HEROIC_ICON)
 local timerUnboundPlague			= mod:NewBuffActiveTimer(12, 70911, nil, nil, nil, 3)		-- Heroic Ability: we can't keep the debuff 60 seconds, so we have to switch at 12-15 seconds. Otherwise the debuff does to much damage!
 
@@ -67,15 +64,12 @@ local warnPhase2					= mod:NewPhaseAnnounce(2, 2, nil, nil, nil, nil, nil, 2)
 local warnChokingGasBombSoon		= mod:NewPreWarnAnnounce(71255, 5, 3, nil, "Melee")
 local warnChokingGasBomb			= mod:NewSpellAnnounce(71255, 3, nil, "Melee")		-- Phase 2 ability
 
---local specWarnMalleableGoo			= mod:NewSpecialWarningYou(72295, nil, nil, nil, 1, 2)
---local yellMalleableGoo				= mod:NewYellMe(72295)
---local specWarnMalleableGooNear		= mod:NewSpecialWarningClose(72295, nil, nil, nil, 1, 2)
 local specWarnChokingGasBomb		= mod:NewSpecialWarningMove(71255, "Melee", nil, nil, 1, 2)
 local specWarnMalleableGooCast		= mod:NewSpecialWarningSpell(72295, "Ranged", nil, nil, 2, 2)
 
-local timerChokingGasBombCD			= mod:NewCDTimer(35.2, 71255, nil, nil, nil, 3, nil, nil, true) -- ~5s variance [35.2-39.8]. Added "keep" arg (25H Lordaeron 2022/09/07 || 25H Lordaeron 2022/09/23 wipe1 || 25H Lordaeron 2022/09/23 kill) - pull:126.3/Stage 2/22.8, 35.3, 35.5, 35.9; pull:126.4/Stage 2/22.1, 36.6, 35.9, 37.3, 38.7, Stage 2.5/7.8, Stage 3/31.9, 30.0/61.9/69.7, 38.2 || pull:121.2/Stage 2/21.9, 37.2, 38.7, 37.7, 38.7, Stage 2.5/2.3, Stage 3/33.0, 33.2/66.1/68.4, 39.4" || Stage 2/21.3, 38.0, 35.2, 35.8, 39.8, Stage 2.5/11.6, Stage 3/33.2, 23.9/57.1/68.8, 35.5
+local timerChokingGasBombCD			= mod:NewCDTimer(35, 71255, nil, nil, nil, 3, nil, nil, true) -- 5s variance [35-40]. Added "keep" arg
 local timerChokingGasBombExplosion	= mod:NewCastTimer(12, 71279, nil, nil, nil, 2)
-local timerMalleableGooCD			= mod:NewNextTimer(20, 72295, nil, nil, nil, 3) -- (25H Lordaeron 2022/09/07) - pull:113.6/Stage 2/10.1, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0; pull:114.4/Stage 2/10.1, 20.0, 20.1, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, Stage 2.5/8.1, Stage 3/31.9, 10.0/41.9/50.0, 20.0, 20.0, 20.0, 20.0"
+local timerMalleableGooCD			= mod:NewCDTimer(25, 72295, nil, nil, nil, 3, nil, nil, true) -- 5s variance [25-30]. Added "keep" arg
 
 local soundSpecWarnMalleableGoo		= mod:NewSound(72295, nil, "Ranged")
 local soundMalleableGooSoon			= mod:NewSoundSoon(72295, nil, "Ranged")
@@ -111,7 +105,8 @@ local timerReengage					= mod:NewTimer(20, "TimerReengage", 1180, nil, nil, 6)
 mod:GroupSpells(71255, 71279) -- Choking Gas Bomb, Choking Gas Explosion
 
 local redOozeGUIDsCasts = {}
-local firstIntermisisonUnboundElapsed = 0
+local heroicDelay = 0
+local timerDelay = 0 -- events.DelayEvents(24000 + heroicDelay, EVENT_GROUP_ABILITIES)
 mod.vb.warned_preP2 = false
 mod.vb.warned_preP3 = false
 mod.vb.unboundCount = 0
@@ -121,138 +116,95 @@ local function NextPhase(self)
 	if self.vb.phase == 2 then
 		warnPhase2:Show()
 		warnPhase2:Play("ptwo")
-		timerUnstableExperimentCD:Start(30+7) -- 19/04/2024: (Heroic) Unstable Experiement scheduled 30 seconds after Create Concoction finishes. https://www.warmane.com/bugtracker/report/121798#comment-114099
-		warnUnstableExperimentSoon:Schedule(25+7)
-		-- EVENT_PHASE_TRANSITION - scheduled for Create Concoction cast + 100 ms (will fire [CHAT_MSG_MONSTER_YELL] Hrm, I don't feel a thing. Wha?! Where'd those come from?)
-		timerMalleableGooCD:Start(15) -- Fixed timer after phase 2: 15s
-		soundMalleableGooSoon:Schedule(15-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
-		timerChokingGasBombCD:Start(25) -- timer after phasing: 5s variance [25-30s]
-		soundChokingGasSoon:Schedule(25-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
-		warnChokingGasBombSoon:Schedule(25-5)
-	--	self:UnregisterShortTermEvents() -- UnregisterShortTermEvents moved here to ensure UNIT_TARGET is unregistered (previously was running on sync, which is not always used)
+		-- EVENT_PHASE_TRANSITION - scheduled for Create Concoction cast + 2.25s (will fire [CHAT_MSG_MONSTER_YELL] Hrm, I don't feel a thing. Wha?! Where'd those come from?)
 	elseif self.vb.phase == 3 then
 		warnPhase3:Show()
 		warnPhase3:Play("pthree")
-		-- EVENT_PHASE_TRANSITION - scheduled for Guzzle Potions cast + 100 ms (will fire [CHAT_MSG_MONSTER_YELL] Tastes like... Cherry! OH! Excuse me!)
-	--	self:UnregisterShortTermEvents() -- UnregisterShortTermEvents moved here to ensure UNIT_TARGET is unregistered (previously was running on sync, which is not always used)
+		-- EVENT_PHASE_TRANSITION - scheduled for Guzzle Potions cast + 2.25s (will fire [CHAT_MSG_MONSTER_YELL] Tastes like... Cherry! OH! Excuse me!)
 	end
 end
-
--- This does not work on Warmane - boss never swaps targets to throw malleable (last checked on 14/07/2021)
---[[function mod:MalleableGooTarget(targetname, uId)
-	if not targetname then return end
-		if self.Options.MalleableGooIcon then
-			self:SetIcon(targetname, 1, 10)
-		end
-	if targetname == UnitName("player") then
-		specWarnMalleableGoo:Show()
-		specWarnMalleableGoo:Play("targetyou")
-		yellMalleableGoo:Yell()
-		soundSpecWarnMalleableGoo:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable.mp3")
-	else
-		if self:CheckNearby(11, targetname) then
-			specWarnMalleableGooNear:Show(targetname)
-			specWarnMalleableGooNear:Play("watchstep")
-			soundSpecWarnMalleableGoo:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable.mp3")
-		else
-			specWarnMalleableGooCast:Show()
-			specWarnMalleableGooCast:Play("watchstep")
-			soundSpecWarnMalleableGoo:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable.mp3")
-		end
-		if self.Options.GooArrow then
-			local x, y = GetPlayerMapPosition(uId)
-			if x == 0 and y == 0 then
-				SetMapToCurrentZone()
-				x, y = GetPlayerMapPosition(uId)
-			end
-			DBM.Arrow:ShowRunAway(x, y, 10, 5)
-		end
-	end
-end]]
 
 function mod:OnCombatStart(delay)
 	self:SetStage(1)
 	berserkTimer:Start(-delay)
-	timerSlimePuddleCD:Start(10-delay)
-	timerUnstableExperimentCD:Start(30-delay) -- REVIEW! need P1 N log data to determine whether H/N has difference. heroic 5s variance (10N Icecrown 2022/08/25 || 10H Lordaeron 2022/09/02 || 25H Lordaeron 2022/09/04) - 61 || 33.0; 30.7; 30.5; 33.9 || 30.5
+	timerSlimePuddleCD:Start(10-delay) -- Fixed timer: 10s. Belongs to EVENT_GROUP_ABILITIES
+	timerUnstableExperimentCD:Start(30-delay) -- 5s variance [30-35]. Belongs to EVENT_GROUP_ABILITIES
 	warnUnstableExperimentSoon:Schedule(25-delay)
 	table.wipe(redOozeGUIDsCasts)
-	firstIntermisisonUnboundElapsed = 0
+	heroicDelay = 0
 	self.vb.warned_preP2 = false
 	self.vb.warned_preP3 = false
 	self.vb.unboundCount = 0
 	if self:IsHeroic() then
-		timerUnboundPlagueCD:Start(20-delay)
+		timerUnboundPlagueCD:Start(20-delay) -- Fixed timer: 20s. Belongs to EVENT_GROUP_ABILITIES
 	end
 end
-
---[[function mod:OnCombatEnd()
-	self:UnregisterShortTermEvents()
-end]]
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if args:IsSpellID(70351, 71966, 71967, 71968) then	-- Unstable Experiment
 		warnUnstableExperimentSoon:Cancel()
 		warnUnstableExperiment:Show()
-		timerUnstableExperimentCD:Start()
+		timerUnstableExperimentCD:Start() -- Belongs to EVENT_GROUP_ABILITIES
 		warnUnstableExperimentSoon:Schedule(30)
 	elseif spellId == 71617 then				--Tear Gas (stun all on Normal phase) (Normal intermission)
 		self:SetStage(self.vb.phase + 0.5) -- ACTION_CHANGE_PHASE
+		timerDelay = 24 -- Delay EVENT_GROUP_ABILITIES
 		warnTearGas:Show()
-		local puddleElapsed = timerSlimePuddleCD:GetTime()
-		timerSlimePuddleCD:Update(puddleElapsed, 59) -- the next Normal Slime Puddle will always be [59.03:25N/59.03:10N]s after the previous Slime Puddle cast, so calculate elapsed time and update timer
-		if self.vb.phase == 2.5 then -- Usual timer delta is not reliable for Malleable Goo, it's a different logic, commented below
-			local gooElapsed = timerMalleableGooCD:GetTime() -- On second Normal intermission, the next Malleable Goo will always be [44:25N/44:10N]s after the previous Malleable Goo cast, so calculate elapsed time and update timer
-			timerMalleableGooCD:Update(gooElapsed, 44)
-			soundMalleableGooSoon:Schedule(44-gooElapsed-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
-			local chokingElapsed = timerChokingGasBombCD:GetTime() -- On second Normal intermission, the next Choking Gas Bomb will always be [59.28-61.10:25N/60.17:10N]s after the previous Choking Gas Bomb cast, so calculate elapsed time and update timer
-			timerChokingGasBombCD:Update(chokingElapsed, 59)
-			soundChokingGasSoon:Schedule(59-chokingElapsed-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
-			warnChokingGasBombSoon:Schedule(59-chokingElapsed-5)
+		warnUnstableExperimentSoon:Cancel()
+		timerSlimePuddleCD:AddTime(timerDelay)
+		if self.vb.phase == 1.5 then -- _phase == 2
+			timerUnstableExperimentCD:AddTime(timerDelay)
+			warnUnstableExperimentSoon:Schedule(timerUnstableExperimentCD:GetRemaining()-3)
+			timerMalleableGooCD:Start(25) -- 3s variance [25-28] + heroicDelay (0 on Normal)
+			soundMalleableGooSoon:Schedule(25-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
+			timerChokingGasBombCD:Start() -- 5s variance [35-40] + heroicDelay (0 on Normal)
+			soundChokingGasSoon:Schedule(35-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
+			warnChokingGasBombSoon:Schedule(35-5)
+		elseif self.vb.phase == 2.5 then -- _phase == 3
+			timerUnstableExperimentCD:Cancel()
+			timerMalleableGooCD:AddTime(timerDelay)
+			soundMalleableGooSoon:Cancel()
+			soundMalleableGooSoon:Schedule(timerMalleableGooCD:GetRemaining()-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
+			timerChokingGasBombCD:AddTime(timerDelay)
+			local chokingRemaining = timerChokingGasBombCD:GetRemaining()
+			soundChokingGasSoon:Cancel()
+			soundChokingGasSoon:Schedule(chokingRemaining-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
+			warnChokingGasBombSoon:Cancel()
+			warnChokingGasBombSoon:Schedule(chokingRemaining-5)
 		end
 	elseif args:IsSpellID(72842, 72843) then		--Volatile Experiment (Heroic intermission)
+		DBM:AddMsg("Volatile Experiment SPELL_CAST_START script fixed. Notify Zidras on Discord or GitHub")
 		self:SetStage(self.vb.phase + 0.5) -- ACTION_CHANGE_PHASE
+		heroicDelay = 25
+		timerDelay = 24 + heroicDelay -- Delay EVENT_GROUP_ABILITIES
 		warnVolatileExperiment:Show()
 		warnUnstableExperimentSoon:Cancel()
-		timerUnstableExperimentCD:Cancel()
-		local puddleElapsed = timerSlimePuddleCD:GetTime()
-		local puddleMaxTimePerDifficulty = self:IsDifficulty("heroic25") and 75 or self:IsDifficulty("heroic10") and 85 or 59 -- the next Heroic Slime Puddle will always be [75.05:25H/84.99:10H]s after the previous Slime Puddle cast, so calculate elapsed time and update timer
-		timerSlimePuddleCD:Update(puddleElapsed, puddleMaxTimePerDifficulty)
-		local unboundElapsed = timerUnboundPlagueCD:GetTime()
+		timerSlimePuddleCD:AddTime(timerDelay)
+		timerUnboundPlagueCD:AddTime(timerDelay)
 		if self.vb.phase == 1.5 then
-			firstIntermisisonUnboundElapsed = unboundElapsed -- cache for second intermission if necessary
-			timerUnboundPlagueCD:Update(unboundElapsed, 130)
-		elseif self.vb.phase == 2.5 then
-			if self.vb.unboundCount == 1 then -- only 1 Unbound Plague cast during whole raid (rushed phase 2)
-				timerUnboundPlagueCD:Update(firstIntermisisonUnboundElapsed, 170) -- 170s between Unbound Plague from Phase 1 and Phase 3
-			else
-				timerUnboundPlagueCD:Update(unboundElapsed, 130) -- REVIEW! One log had 220.04 (25H Lordaeron [2024-05-21]@[21:15:56]), it needs investigation
-			end
-			local gooElapsed = timerMalleableGooCD:GetTime() -- On second Heroic intermission, the next Malleable Goo will always be [60:25H/70:10H]s after the previous Malleable Goo cast, so calculate elapsed time and update timer
-			local gooMaxTimePerDifficulty = self:IsDifficulty("heroic25") and 60 or self:IsDifficulty("heroic10") and 70 or 44 -- REVIEW! 25H confirmed, 10H need more data, 25N only one log, 10N only one log
-			timerMalleableGooCD:Update(gooElapsed, gooMaxTimePerDifficulty)
-			soundMalleableGooSoon:Schedule(gooMaxTimePerDifficulty-gooElapsed-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
-			local chokingElapsed = timerChokingGasBombCD:GetTime() -- On second Heroic intermission, the next Choking Gas Bomb will always be [75-80:25H/89.39:10H]s after the previous Choking Gas Bomb cast, so calculate elapsed time and update timer
-			local chokingMaxTimePerDifficulty = self:IsDifficulty("heroic25") and 75 or self:IsDifficulty("heroic10") and 85 or 59 -- REVIEW! 25H confirmed, 10H only one log, 25N only two log, 10N only one log
-			timerChokingGasBombCD:Update(chokingElapsed, chokingMaxTimePerDifficulty)
-			soundChokingGasSoon:Schedule(chokingMaxTimePerDifficulty-chokingElapsed-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
-			warnChokingGasBombSoon:Schedule(chokingMaxTimePerDifficulty-chokingElapsed-5)
+			timerUnstableExperimentCD:AddTime(timerDelay)
+			warnUnstableExperimentSoon:Schedule(timerUnstableExperimentCD:GetRemaining()-3)
+			timerMalleableGooCD:Start(50) -- 3s variance [25-28] + heroicDelay (25 on Heroic) = [50-53]
+			soundMalleableGooSoon:Schedule(50-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
+			timerChokingGasBombCD:Start(60) -- 5s variance [35-40] + heroicDelay (25 on Heroic) = [60-65]
+			soundChokingGasSoon:Schedule(60-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
+			warnChokingGasBombSoon:Schedule(60-5)
+		elseif self.vb.phase == 2.5 then -- _phase == 3
+			timerUnstableExperimentCD:Cancel()
+			timerMalleableGooCD:AddTime(timerDelay)
+			soundMalleableGooSoon:Cancel()
+			soundMalleableGooSoon:Schedule(timerMalleableGooCD:GetRemaining()-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
+			timerChokingGasBombCD:AddTime(timerDelay)
+			local chokingRemaining = timerChokingGasBombCD:GetRemaining()
+			soundChokingGasSoon:Cancel()
+			soundChokingGasSoon:Schedule(chokingRemaining-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
+			warnChokingGasBombSoon:Cancel()
+			warnChokingGasBombSoon:Schedule(chokingRemaining-5)
 		end
 	elseif args:IsSpellID(72851, 72852, 71621, 72850) then		--Create Concoction (phase2 change)
-		local castTime = self:IsHeroic() and 30 or 4 -- Normal and Heroic have different cast times, so hardcode the cast time in seconds. DO NOT USE GetSpellInfo API here, as it is affected by player Haste.
-		warnUnstableExperimentSoon:Cancel()
-		timerUnstableExperimentCD:Cancel()
-		timerNextPhase:Start(castTime) -- Script phasing happens right after UNIT_SPELLCAST_SUCCEEDED. Boss re-engage is timed to account for the remaining time (check YELL)
-		self:Schedule(castTime, NextPhase, self) -- prefer scheduling over UNIT_SPELLCAST_SUCCEEDED because on Normal difficulty Create Concoction does not fire UNIT_SPELLCAST_SUCCEEDED, only _STOP. This has the benefit of also being cross-server
-		if self:IsHeroic() then
---			if self:IsDifficulty("heroic10") then -- Apply to both 10H and 25H (reason below)
-				-- self:Schedule(35.63, NextPhase, self) -- using longest timer found, since this is a schedule
-				self:RegisterShortTermEvents(
-					"UNIT_TARGET"
-				)
---			end
-		end
+		local castTime = 4 -- REVIEW! Does Heroic have different cast times? Hardcode the cast time in seconds. DO NOT USE GetSpellInfo API here, as it is affected by player Haste.
+		timerNextPhase:Start(castTime+2.25) -- Schedule EVENT_PHASE_TRANSITION + 2250
 	elseif args:IsSpellID(70672, 72455, 72832, 72833) then	--Red Slime
 		timerGaseousBloatCast:Start(args.sourceGUID) -- account for multiple red oozes
 		if not redOozeGUIDsCasts[args.sourceGUID] then
@@ -265,23 +217,15 @@ function mod:SPELL_CAST_START(args)
 			specWarnGaseousBloatCast:Play("targetchange")
 		end
 	elseif args:IsSpellID(73121, 73122, 73120, 71893) then		--Guzzle Potions (phase3 change)
-		local castTime = self:IsDifficulty("heroic25") and 20 or self:IsDifficulty("heroic10") and 30 or 4 -- Normal, Heroic10 and Heroic25 have different cast times, so hardcode the cast time in seconds. DO NOT USE GetSpellInfo API here, as it is affected by player Haste.
-		timerUnstableExperimentCD:Cancel()
-		timerNextPhase:Start(castTime) -- Script phasing happens right after UNIT_SPELLCAST_SUCCEEDED. Boss re-engage is timed to account for the remaining time (check YELL)
-		self:Schedule(castTime, NextPhase, self) -- prefer scheduling over UNIT_SPELLCAST_SUCCEEDED because on Normal difficulty Guzzle Potions does not fire UNIT_SPELLCAST_SUCCEEDED, only _STOP. This has the benefit of also being cross-server
-		if self:IsHeroic() then
-			--self:Schedule(38.69, NextPhase, self) -- REVIEW! using longest timer found, since this is a schedule
-			--timerNextPhase:Start(38.67) -- (10H Lordaeron [2023-08-12]@[20:34:20]) - 38.67
-			self:RegisterShortTermEvents(
-				"UNIT_TARGET"
-			)
-		end
+		local castTime = 4 -- REVIEW! Does Heroic have different cast times? Hardcode the cast time in seconds. DO NOT USE GetSpellInfo API here, as it is affected by player Haste.
+		timerNextPhase:Start(castTime+2.25) -- Schedule EVENT_PHASE_TRANSITION + 2250
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 70341 and self:AntiSpam(5, 1) then
+		DBM:AddMsg("Slime Puddle SPELL_CAST_SUCCESS unhidden from combat log. Notify Zidras on Discord or GitHub") -- It does not fire on UltimoWow. Replaced with SPELL_SUMMON
 		warnSlimePuddle:Show()
 		soundSlimePuddle:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\puddle_cast.mp3")
 		timerSlimePuddleCD:Start()
@@ -290,17 +234,16 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnChokingGasBomb:Show()
 		soundSpecWarnChokingGasBomb:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking.mp3")
 		soundChokingGasSoon:Cancel()
-		soundChokingGasSoon:Schedule(35.5-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
-		timerChokingGasBombCD:Start()
+		soundChokingGasSoon:Schedule(35-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
+		timerChokingGasBombCD:Start() -- Belongs to EVENT_GROUP_ABILITIES
 		timerChokingGasBombExplosion:Start()
-		warnChokingGasBombSoon:Schedule(30.5)
+		warnChokingGasBombSoon:Schedule(30)
 	elseif args:IsSpellID(72855, 72856, 70911) then
 		self.vb.unboundCount = self.vb.unboundCount + 1
-		timerUnboundPlagueCD:Start()
+		timerUnboundPlagueCD:Start() -- Belongs to EVENT_GROUP_ABILITIES
 	elseif args:IsSpellID(72615, 72295, 74280, 74281) then -- Malleable Goo
-		--self:BossTargetScanner(36678, "MalleableGooTarget", 0.05, 6)
+		DBM:AddMsg("Malleable Goo SPELL_CAST_SUCCESS unhidden from combat log. Notify Zidras on Discord or GitHub") -- It does not fire on this server script. Replaced with CHAT_MSG_RAID_BOSS_EMOTE
 		specWarnMalleableGooCast:Show()
-		--specWarnMalleableGooCast:Play("watchstep")
 		timerMalleableGooCD:Start()
 		soundSpecWarnMalleableGoo:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable.mp3")
 		soundMalleableGooSoon:Cancel()
@@ -401,25 +344,71 @@ function mod:SPELL_AURA_REMOVED(args)
 		end
 	elseif spellId == 71615 and (self.vb.phase == 1.5 or self.vb.phase == 2.5) then	-- Tear Gas Removal. Requires phase check because sometimes Tear Gas is removed from Abomination much later than the rest of the raid, during phase 2, causing another phasing to 2.5 (Logs: 10N Frostmourne [2023-01-07]@[17:20:22] and [2023-01-07]@[17:42:33] || 10N Icecrown [2023-04-05]@[22:54:25])
 		DBM:Debug("Re-engaged")
-		--	NextPhase(self)
 	elseif args:IsSpellID(70539, 72457, 72875, 72876) then
 		timerRegurgitatedOoze:Cancel(args.destName)
 	elseif spellId == 70542 then
 		timerMutatedSlash:Cancel(args.destName)
 	elseif (args:IsSpellID(70352, 74118) or args:IsSpellID(70353, 74119)) and (self.vb.phase == 1.5 or self.vb.phase == 2.5) then	-- Ooze Variable / Gas Variable (Heroic 25 - Phase 2 and 3). Disabled for two main reasons: raid member dying will trigger this event, and I have found multiple logs with early SAR
 		DBM:Debug("Variable phasing time marker")
---		NextPhase(self)
+	end
+end
+
+function mod:SPELL_SUMMON(args)
+	local spellId = args.spellId
+	if spellId == 70342 and self:AntiSpam(5, 1) then -- Slime Puddle
+		warnSlimePuddle:Show()
+		soundSlimePuddle:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\puddle_cast.mp3")
+		timerSlimePuddleCD:Start() -- Belongs to EVENT_GROUP_ABILITIES
 	end
 end
 
 function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if msg == L.HeroicIntermission or msg:find(L.HeroicIntermission) then -- ACTION_CHANGE_PHASE. Workaround to script not firing Volatile Experiment.
+		self:SetStage(self.vb.phase + 0.5)
+		heroicDelay = 25
+		timerDelay = 24 + heroicDelay -- Delay EVENT_GROUP_ABILITIES
+		warnUnstableExperimentSoon:Cancel()
+		timerSlimePuddleCD:AddTime(timerDelay)
+		timerUnboundPlagueCD:AddTime(timerDelay)
+		if self.vb.phase == 1.5 then -- _phase == 2
+			timerUnstableExperimentCD:AddTime(timerDelay)
+			warnUnstableExperimentSoon:Schedule(timerUnstableExperimentCD:GetRemaining()-3)
+			timerMalleableGooCD:Start(50) -- 3s variance [25-28] + heroicDelay (25 on Heroic) = [50-53]
+			soundMalleableGooSoon:Schedule(50-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
+			timerChokingGasBombCD:Start(60) -- 5s variance [35-40] + heroicDelay (25 on Heroic) = [60-65]
+			soundChokingGasSoon:Schedule(60-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
+			warnChokingGasBombSoon:Schedule(60-5)
+		elseif self.vb.phase == 2.5 then -- _phase == 3
+			timerUnstableExperimentCD:Cancel()
+			timerMalleableGooCD:AddTime(timerDelay)
+			soundMalleableGooSoon:Cancel()
+			soundMalleableGooSoon:Schedule(timerMalleableGooCD:GetRemaining()-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
+			timerChokingGasBombCD:AddTime(timerDelay)
+			local chokingRemaining = timerChokingGasBombCD:GetRemaining()
+			soundChokingGasSoon:Cancel()
+			soundChokingGasSoon:Schedule(chokingRemaining-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\choking_soon.mp3")
+			warnChokingGasBombSoon:Cancel()
+			warnChokingGasBombSoon:Schedule(chokingRemaining-5)
+		end
 	-- EVENT_RESUME_ATTACK
-	if msg == L.YellTransform1 or msg:find(L.YellTransform1) then
+	elseif msg == L.YellTransform1 or msg:find(L.YellTransform1) then
+		NextPhase(self)
 		warnReengage:Schedule(5.5, L.name)
 		timerReengage:Start(5.5)
 	elseif msg == L.YellTransform2 or msg:find(L.YellTransform2) then
+		NextPhase(self)
 		warnReengage:Schedule(8.5, L.name)
 		timerReengage:Start(8.5)
+	end
+end
+
+function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
+	if msg:find(L.MalleableGooCastEmote) then -- Malleable Goo. Workaround to missing CLEU event
+		specWarnMalleableGooCast:Show()
+		timerMalleableGooCD:Start() -- Belongs to EVENT_GROUP_ABILITIES
+		soundSpecWarnMalleableGoo:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable.mp3")
+		soundMalleableGooSoon:Cancel()
+		soundMalleableGooSoon:Schedule(20-3, "Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\malleable_soon.mp3")
 	end
 end
 
@@ -438,43 +427,5 @@ function mod:UNIT_HEALTH(uId)
 		warnChokingGasBombSoon:Cancel()
 		soundMalleableGooSoon:Cancel()
 		soundChokingGasSoon:Cancel()
-	end
-end
-
--- On 10 Heroic, there is no event we can use to accurately trigger phasing. On 25 Heroic, we could use SPELL_AURA_REMOVED, but not reliable without UnitBuff checks or table management which would add unnecessary overhead (see above)
--- UNIT_TARGET only fires if boss is targeted or focused (sync'ed below)
-function mod:UNIT_TARGET(uId)
-	if self:GetUnitCreatureId(uId) ~= 36678 then return end
-	-- Attempt to catch when boss phases by checking for Putricide's target being a raid member
-	if UnitExists(uId.."target") then
-		if self.vb.phase == --[[1.5]]2 then -- new script phases before boss reengage
-			self:SendSync("ProfessorPhase2") -- Sync phasing with raid since UNIT_TARGET event requires boss to be target/focus, which not all members do
-		elseif self.vb.phase == --[[2.5]]3 then -- new script phases before boss reengage
-			self:SendSync("ProfessorPhase3") -- Sync phasing with raid since UNIT_TARGET event requires boss to be target/focus, which not all members do
-		else
-			self:UnregisterShortTermEvents()
-			DBM:Debug("UNIT_TARGET phasing did not work since phase was wrongly set: " .. self.vb.phase)
-		end
-	end
-end
-
---[[function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
-	if spellName == GetSpellInfo(72851) or spellName == GetSpellInfo(73121) then -- Create Concoction (phase 2) or Guzzle Potion (phase 3). Cast Succeeded triggers new phase
-		NextPhase(self)
-	end
-end]]
-
-function mod:OnSync(msg)
-	if not self:IsInCombat() then return end
-	if msg == "ProfessorPhase2" and self.vb.phase == --[[1.5]]2 then
-		--self:Unschedule(NextPhase)
-		--NextPhase(self)
-		self:UnregisterShortTermEvents()
-		DBM:Debug("Putricide (phase 2) re-engaged via UNIT_TARGET sync")
-	elseif msg == "ProfessorPhase3" and self.vb.phase == --[[2.5]]3 then
-		--self:Unschedule(NextPhase)
-		--NextPhase(self)
-		self:UnregisterShortTermEvents()
-		DBM:Debug("Putricide (phase 3) re-engaged via UNIT_TARGET sync")
 	end
 end

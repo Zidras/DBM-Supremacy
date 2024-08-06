@@ -181,6 +181,8 @@ L:SetTimerLocalization({
 })]]
 
 L:SetMiscLocalization({
+	HeroicIntermission		= "Un limon ça va, deux limons, bonjour les dégâts !",
+	MalleableGooCastEmote	= "Gelée malléable", -- |TInterface\Icons\inv_misc_herb_evergreenmoss.blp:16|t%s lance une |cFF00FF00Gelée malléable !|r
 	YellTransform1			= "Mmm, je ne sens plus rien. Woah ?! Mais ça vient d'où, tout ça ?",
 	YellTransform2			= "Au bon goût de… Cerise ! Oups ! Pardon !"
 })
