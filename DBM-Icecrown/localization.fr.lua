@@ -218,7 +218,11 @@ L:SetMiscLocalization({
 	Taldaram			= "Prince Taldaram",
 	Valanar				= "Prince Valanar",
 	FirstPull			= "Naïfs mortels. Vous pensiez nous avoir vaincus si facilement ? Les San'layn sont les soldats immortels du roi-liche ! Maintenant, vous allez subir leurs puissances réunies !",
-	EmpoweredFlames		= "L'Embrasement surpuissant (%S+)!"
+	EmpoweredFlames		= "L'Embrasement surpuissant (%S+)!",
+	InvocationOfBlood	= "L'Invocation de sang part sur le (.+) !"
+--	OrbSwitchValanar	= "L'Invocation de sang part sur le prince Valanar !", -- 38589
+--	OrbSwitchKeleseth	= "L'Invocation de sang part sur le prince Keleseth !", -- 38588
+--	OrbSwitchTaldaram	= "L'Invocation de sang part sur le prince Taldaram !" -- 38590
 })
 
 -----------------------------

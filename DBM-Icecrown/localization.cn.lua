@@ -214,7 +214,11 @@ L:SetMiscLocalization({
 	Taldaram = "塔达拉姆王子",
 	Valanar = "瓦拉纳王子",
 	FirstPull = "愚蠢的凡人。你以为能轻易打败我们？萨莱因是巫妖王永生的战士！现在他们将合力撕碎你！",
-	EmpoweredFlames = "强能烈焰飞快地冲向(%S+)！"
+	EmpoweredFlames = "强能烈焰飞快地冲向(%S+)！",
+	InvocationOfBlood	= "(.+)王子获得了鲜血唤醒的效果！"
+--	OrbSwitchValanar	= "瓦拉纳王子获得了鲜血唤醒的效果！", -- 38589
+--	OrbSwitchKeleseth	= "凯雷塞斯王子获得了鲜血唤醒的效果！", -- 38588
+--	OrbSwitchTaldaram	= "塔达拉姆王子获得了鲜血唤醒的效果！" -- 38590
 })
 
 -----------------------------

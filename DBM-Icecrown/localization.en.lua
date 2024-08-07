@@ -222,7 +222,11 @@ L:SetMiscLocalization({
 	Taldaram			= "Prince Taldaram",
 	Valanar				= "Prince Valanar",
 	FirstPull			= "Foolish mortals. You thought us defeated so easily? The San'layn are the Lich King's immortal soldiers! Now you shall face their might combined!",
-	EmpoweredFlames		= "Empowered Flames speed toward (%S+)!"
+	EmpoweredFlames		= "Empowered Flames speed toward (%S+)!",
+	InvocationOfBlood	= "Invocation of Blood jumps to (.+)!"
+--	OrbSwitchValanar	= "Invocation of Blood jumps to Prince Valanar!", -- 38589
+--	OrbSwitchKeleseth	= "Invocation of Blood jumps to Prince Keleseth!", -- 38588
+--	OrbSwitchTaldaram	= "Invocation of Blood jumps to Prince Taldaram!" -- 38590
 })
 
 -----------------------------

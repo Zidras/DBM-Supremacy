@@ -217,7 +217,11 @@ L:SetMiscLocalization({
 	Taldaram			= "Prinz Taldaram",
 	Valanar				= "Prinz Valanar",
 	FirstPull			= "Törichte Sterbliche. Ihr glaubt, wir wären so einfach besiegt? Die San'layn sind die unsterblichen Soldaten des Lichkönigs! Seht nun ihre vereinte Macht!",
-	EmpoweredFlames		= "Machtvolle Flammen rasen auf (%S+) zu!"
+	EmpoweredFlames		= "Machtvolle Flammen rasen auf (%S+) zu!",
+	InvocationOfBlood	= "Der Zauber 'Herbeirufung des Bluts' springt auf (.+) über!"
+--	OrbSwitchValanar	= "Der Zauber 'Herbeirufung des Bluts' springt auf Prinz Valanar über!", -- 38589
+--	OrbSwitchKeleseth	= "Der Zauber 'Herbeirufung des Bluts' springt auf Prinz Keleseth über!", -- 38588
+--	OrbSwitchTaldaram	= "Der Zauber 'Herbeirufung des Bluts' springt auf Prinz Taldaram über!" -- 38590
 })
 
 -----------------------------

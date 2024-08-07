@@ -216,7 +216,11 @@ L:SetMiscLocalization({
 	Taldaram			= "泰爾達朗親王",
 	Valanar				= "瓦拉納爾親王",
 	FirstPull			= "愚蠢的凡人。你以為我們會如此輕易被擊敗?煞婪一族是巫妖王的永恆士兵!現在你將面對他們聯合的力量!",
-	EmpoweredFlames		= "煉獄烈焰加速靠近(%S+)!"
+	EmpoweredFlames		= "煉獄烈焰加速靠近(%S+)!",
+	InvocationOfBlood	= "血魄祈願跳到(.+)親王身上!"
+--	OrbSwitchValanar	= "血魄祈願跳到瓦拉納爾親王身上!", -- 38589
+--	OrbSwitchKeleseth	= "血魄祈願跳到凱雷希斯親王身上!", -- 38588
+--	OrbSwitchTaldaram	= "血魄祈願跳到泰爾達朗親王身上!" -- 38590
 })
 
 -----------------------------

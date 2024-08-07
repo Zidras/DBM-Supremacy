@@ -217,7 +217,11 @@ L:SetMiscLocalization({
 	Taldaram			= "공작 탈다람",
 	Valanar				= "공작 발라나르",
 	FirstPull			= "어리석은 필멸자들 같으니. 그리 쉽게 우리를 이겼다고 생각했어? 산레인은 리치 왕이 다스리는 불멸의 병사들이야! 이제 합쳐진 그 힘을 보여주겠어!",
-	EmpoweredFlames		= "강력한 불꽃이 (%S+)"
+	EmpoweredFlames		= "강력한 불꽃이 (%S+)",
+	InvocationOfBlood	= "피의 기원이 공작 (.+)에게 옮겨갑니다!"
+--	OrbSwitchValanar	= "피의 기원이 공작 발라나르에게 옮겨갑니다!", -- 38589
+--	OrbSwitchKeleseth	= "피의 기원이 공작 켈레세스에게 옮겨갑니다!", -- 38588
+--	OrbSwitchTaldaram	= "피의 기원이 공작 탈다람에게 옮겨갑니다!" -- 38590
 })
 
 -----------------------

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("BPCouncil", "DBM-Icecrown", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20231203191448")
+mod:SetRevision("20240807101959")
 mod:SetCreatureID(37970, 37972, 37973)
 mod:SetUsedIcons(1, 5, 6, 7, 8)
 mod:SetBossHPInfoToHighest()
@@ -29,15 +29,13 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3"
 )
 
-local myRealm = select(3, DBM:GetMyPlayerInfo())
-
 -- General
 local warnTargetSwitch			= mod:NewAnnounce("WarnTargetSwitch", 3, 70952)
 local warnTargetSwitchSoon		= mod:NewAnnounce("WarnTargetSwitchSoon", 2, 70952)
 
-local timerCombatStart			= mod:NewCombatTimer(29) -- Roleplay for first pull
-local timerTargetSwitch			= mod:NewTimer(46.5, "TimerTargetSwitch", 70952) -- REVIEW! ~0.2s variance [46.42-46.60], with 46.0/46.2 outliers. Since these outliers are very rare, I prefer keeping this timer as the most probable cd seen in the logs
-local berserkTimer				= mod:NewBerserkTimer((myRealm == "Lordaeron" or myRealm == "Frostmourne") and 360 or 600)
+local timerCombatStart			= mod:NewCombatTimer(14) -- Roleplay for first pull
+local timerTargetSwitch			= mod:NewTimer(46, "TimerTargetSwitch", 70952) -- Fixed timer: 46s
+local berserkTimer				= mod:NewBerserkTimer(600)
 
 mod:AddSetIconOption("ActivePrinceIcon", nil, false, 5, {8})
 
@@ -53,7 +51,7 @@ local warnKineticBomb			= mod:NewSpellAnnounce(72053, 3, nil, false)
 
 local specWarnKineticBomb		= mod:NewSpecialWarningCount(72053, "Ranged", nil, nil, 1)
 
-local timerKineticBombCD		= mod:NewCDCountTimer(18, 72053, nil, "Ranged", nil, 1, nil, nil, true) -- ~6s variance [18.0-23.9] Added "keep" arg. (10N Icecrown 2022/08/25 || 25H Lordaeron 2022/12/07 || 25H Lordaeron [2023-08-23]@[21:05:58]) - 19.2, 23.6, 22.2, 18.5, 19.2 || 18.5, 18.3, 22.1, 19.2, 20.8, 20.4, 19.7, 21.6, 20.9, 19.5, 20.5 || pull:19.8, 23.9, 21.9, 19.6, 21.4, 23.9, 18.5, 22.0, 18.5, 21.9, 21.6
+local timerKineticBombCD		= mod:NewCDCountTimer(30.5, 72053, nil, "Ranged", nil, 1, nil, nil, true) -- 6s variance on engage [18-24], but fixed timer afterwards: 20.5s on 25man and 30.5s on rest. Added "keep" arg
 
 local soundKineticBomb			= mod:NewSound(72053, nil, "Ranged")
 
@@ -68,8 +66,8 @@ local yellVortex				= mod:NewYellMe(72037)
 local specWarnVortexNear		= mod:NewSpecialWarningClose(72037, nil, nil, nil, 1, 2)
 local specWarnEmpoweredShockV	= mod:NewSpecialWarningMoveAway(72039, nil, nil, nil, 1, 2)
 
-local timerShockVortex			= mod:NewCDTimer(18.2, 72037, nil, nil, nil, 3, nil, nil, true) -- ~5s variance [18.2 - 22.7]. Added "keep" arg. (2 Warmane 2021 logs || 25H Lordaeron 2022/07/09 || 10N Icecrown 2022/08/25 || 25H Lordaeron 2022/09/07 || 25H Lordaeron 2022/10/21) - 19-22s || 20.3, 22.6, 21.3, 19.6, ..., 19.4, 19.7 || 18.5, 18.6 || pull:76.0 (Empowered 30.1), 18.4, 19.4, 22.0, 19.7, 22.7 || pull:76.3 (Empowered 16.3 + 30.0), 19.9, 18.2, 22.2
-local timerEmpoweredShockVortex	= mod:NewCDTimer(30, 72039, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON, true) -- Added "keep" arg. (25H Lordaeron 2022/09/07) - pull:15.9, 30.0, 152.4 (20.1 non-empowered)
+local timerShockVortex			= mod:NewCDTimer(18, 72037, nil, nil, nil, 3, nil, nil, true) -- 5s variance [18-23]. Added "keep" arg.
+local timerEmpoweredShockVortex	= mod:NewCDTimer(30, 72039, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON, true) -- 5s variance on engage [15-20], but fixed timer afterwards: 30s. Added "keep" arg.
 
 local soundSpecWarnVortexNear	= mod:NewSoundClose(72037)
 local soundEmpoweredShockV		= mod:NewSound(72039)
@@ -87,8 +85,8 @@ local warnGliteringSparks		= mod:NewTargetAnnounce(71807, 2, nil, false)
 local specWarnEmpoweredFlames	= mod:NewSpecialWarningRun(72040, nil, nil, nil, 4, 2)
 local yellEmpoweredFlames		= mod:NewYellMe(72040)
 
-local timerConjureFlamesCD		= mod:NewCDTimer(15.3, 71718, nil, nil, nil, 3, nil, nil, true) -- normal + empowered. REVIEW! ~13s variance [15.3-29.4]. Added "keep" arg (25H Lordaeron 2022/09/07 || 25H Lordaeron 2022/10/09 || 25H Lordaeron 2022/10/21) -- 20.0, 29.4, 24.3, 18.0, 23.5, 21.3, 27.6, 20.5, 22.3 || 20.0, 29.9, 22.0, 17.7, 24.6, 29.1, 29.9 || pull:76.3, 19.9, 18.2, 22.2 (Empowered: pull:93.8, 18.7, 15.3)
-local timerGlitteringSparksCD	= mod:NewCDTimer(15.9, 71807, nil, nil, nil, 2, nil, nil, true) -- This is pretty nasty on heroic. Very high variance! Added "keep" arg (10N Icecrown 2022/08/25 || 25H Lordaeron 2022/09/07) - 36, 17.5 || pull:12.5, 43.5, 20.8, 44.3, 38.6, 16.9, 33.3
+local timerConjureFlamesCD		= mod:NewCDTimer(20, 71718, nil, nil, nil, 3, nil, nil, true) -- normal + empowered. 5s variance for normal [20-25] and Fixed timer for Empowered: 15s. Added "keep" arg.
+local timerGlitteringSparksCD	= mod:NewCDTimer(15, 71807, nil, nil, nil, 2, nil, nil, true) -- This is pretty nasty on heroic. 10s variance [15-25]! Added "keep" arg.
 
 local soundEmpoweredFlames		= mod:NewSoundYou(72040)
 
@@ -99,7 +97,7 @@ mod:AddArrowOption("EmpoweredFlameArrow", 72040, true)
 mod:AddTimerLine(L.Keleseth)
 local warnDarkNucleus			= mod:NewSpellAnnounce(71943, 1, nil, false)	-- instant cast
 
-local timerDarkNucleusCD		= mod:NewCDTimer(10, 71943, nil, false, nil, 5, nil, nil, true)	-- ~6s variance [10.5-16.3]. Added "keep" arg (25H Lordaeron 2022/09/07) - 12.1, 12.2, 14.2, 16.3, 12.2, 10.5, 13.8, 12.1, 14.1, 12.2, 12.1, 14.3, 14.1, 14.3, 13.9, 12.1
+local timerDarkNucleusCD		= mod:NewCDTimer(10, 71943, nil, false, nil, 5, nil, nil, true)	-- 5s variance [10-15]. Added "keep" arg
 
 mod.vb.kineticIcon = 7
 mod.vb.kineticCount = 0
@@ -112,10 +110,12 @@ function mod:OnCombatStart(delay)
 	berserkTimer:Start(-delay)
 	warnTargetSwitchSoon:Schedule(42-delay)
 	warnTargetSwitchSoon:ScheduleVoice(42-delay, "swapsoon")
-	timerTargetSwitch:Start(-delay)
-	timerEmpoweredShockVortex:Start(15-delay) -- REVIEW! 5s variance [15-20] (25H Lordaeron 2022/09/07 || 10N Frostmourne 2023-01-22) - 15.9 || 15.6
-	timerKineticBombCD:Start(19.8-delay, 1) -- (25H Lordaeron 2022/07/09 || 25H Lordaeron 2022/07/30 || 10N Icecrown 2022/08/22 || 10N Icecrown 2022/08/25 || 25H Lordaeron 2022/09/07 || 25H Lordaeron 2022/12/07 || 10N Frostmourne 2023-01-22 || 25H Lordaeron [2023-08-23]@[21:05:58]) - 24 || 24 || 27 || 24.9 || 23.1 || 22.1 || 21.6 || 19.8
-	timerDarkNucleusCD:Start(12-delay) -- REVIEW! Lowest possible timer? (25H Lordaeron 2022/07/09 || 25H Lordaeron 2022/07/30 || 10N Icecrown 2022/08/22 || 10N Icecrown 2022/08/25 || 25H Lordaeron 2022/09/07 || 10N Frostmourne 2023-01-22) - 15 || 12 || 14 || 12 || 12.3 || 13.5
+	timerTargetSwitch:Start(45-delay) -- Fixed timer: 45s
+	timerEmpoweredShockVortex:Start(15-delay) -- 5s variance [15-20]
+	timerKineticBombCD:Start(18-delay, 1) -- 6s variance [18-24]
+	timerDarkNucleusCD:Start(-delay) -- 5s variance [10-15]
+	timerGlitteringSparksCD:Start(12-delay) -- 3s variance [12-15]
+	timerConjureFlamesCD:Start(20-delay) -- Fixed timer: 20s
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show(12)
 	end
@@ -179,68 +179,21 @@ function mod:SPELL_CAST_START(args)
 		timerConjureFlamesCD:Start()
 	elseif spellId == 72040 then	-- Conjure Empowered Flames
 		warnEmpoweredFlamesCast:Show()
-		timerConjureFlamesCD:Start()
+		timerConjureFlamesCD:Start(15)
 	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 70952 then
-		if self:IsInCombat() then
-			warnTargetSwitch:Show(L.Valanar)
-			warnTargetSwitchSoon:Schedule(42)
-			warnTargetSwitchSoon:ScheduleVoice(42, "swapsoon")
-			timerTargetSwitch:Start()
-			if not timerEmpoweredShockVortex:IsStarted() then -- avoid overwriting first vortex
-				if timerShockVortex:IsStarted() then
-					timerEmpoweredShockVortex:Start(timerShockVortex:GetRemaining())
-				else
-					timerEmpoweredShockVortex:Start(20) -- random
-				end
-			end
-			timerShockVortex:Cancel()
-			if self.Options.RangeFrame then
-				DBM.RangeCheck:Show(12)
-			end
-		end
 		if self.Options.ActivePrinceIcon then
 			self:ScanForMobs(args.destGUID, 2, 8, 1, nil, 12, "ActivePrinceIcon")
 		end
 	elseif spellId == 70981 then
-		warnTargetSwitch:Show(L.Keleseth)
-		warnTargetSwitchSoon:Schedule(42)
-		warnTargetSwitchSoon:ScheduleVoice(42, "swapsoon")
-		timerTargetSwitch:Start()
-		if not timerShockVortex:IsStarted() then
-			if timerEmpoweredShockVortex:IsStarted() then
-				timerShockVortex:Start(timerEmpoweredShockVortex:GetRemaining())
-				timerEmpoweredShockVortex:Cancel()
-			else
-				timerShockVortex:Start()
-			end
-		end
-		if self.Options.RangeFrame then
-			self:ScheduleMethod(4.5, "HideRange")--delay hiding range frame for a few seconds after change incase valanaar got a last second vortex cast off
-		end
 		if self.Options.ActivePrinceIcon then
 			self:ScanForMobs(args.destGUID, 2, 8, 1, nil, 12, "ActivePrinceIcon")
 		end
 	elseif spellId == 70982 and self:IsInCombat() then
-		warnTargetSwitch:Show(L.Taldaram)
-		warnTargetSwitchSoon:Schedule(42)
-		warnTargetSwitchSoon:ScheduleVoice(42, "swapsoon")
-		timerTargetSwitch:Start()
-		if not timerShockVortex:IsStarted() then
-			if timerEmpoweredShockVortex:IsStarted() then
-				timerShockVortex:Start(timerEmpoweredShockVortex:GetRemaining())
-				timerEmpoweredShockVortex:Cancel()
-			else
-				timerShockVortex:Start()
-			end
-		end
-		if self.Options.RangeFrame then
-			self:ScheduleMethod(4.5, "HideRange")--delay hiding range frame for a few seconds after change incase valanaar got a last second vortex cast off
-		end
 		if self.Options.ActivePrinceIcon then
 			self:ScanForMobs(args.destGUID, 2, 8, 1, nil, 12, "ActivePrinceIcon")
 		end
@@ -285,7 +238,7 @@ function mod:SPELL_SUMMON(args)
 	end
 end
 
-function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
+function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, sender, _, _, target)
 	if msg:match(L.EmpoweredFlames) and target then
 		target = DBM:GetUnitFullName(target)
 		if target == UnitName("player") then
@@ -304,6 +257,36 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 		if self.Options.EmpoweredFlameArrow then
 			DBM.Arrow:ShowRunTo(target, 0, 0, 10) -- 0 distance (so it doesn't hide with proximity) and 10s hideTime
 		end
+	elseif msg:match(L.InvocationOfBlood) and sender then -- On server script, this event fires when the switch happens, which is faster and more accurate than SAA as the Blood Orb has travel time!
+		warnTargetSwitch:Show(sender)
+		warnTargetSwitchSoon:Schedule(42)
+		warnTargetSwitchSoon:ScheduleVoice(42, "swapsoon")
+		timerTargetSwitch:Start()
+		if sender == L.Valanar then -- Switched to Valanar
+			if not timerEmpoweredShockVortex:IsStarted() then -- avoid overwriting first vortex
+				if timerShockVortex:IsStarted() then
+					timerEmpoweredShockVortex:Start(timerShockVortex:GetRemaining())
+				else
+					timerEmpoweredShockVortex:Start(20) -- random
+				end
+			end
+			timerShockVortex:Cancel()
+			if self.Options.RangeFrame then
+				DBM.RangeCheck:Show(12)
+			end
+		elseif sender == L.Keleseth or sender == L.Taldaram then -- Switched to Keleseth or Taldaram
+			if not timerShockVortex:IsStarted() then
+				if timerEmpoweredShockVortex:IsStarted() then
+					timerShockVortex:Start(timerEmpoweredShockVortex:GetRemaining())
+					timerEmpoweredShockVortex:Cancel()
+				else
+					timerShockVortex:Start()
+				end
+			end
+			if self.Options.RangeFrame then
+				self:ScheduleMethod(4.5, "HideRange")--delay hiding range frame for a few seconds after switch in case Valanar got a last second vortex cast off
+			end
+		end
 	end
 end
 
@@ -313,7 +296,11 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
 		warnKineticBomb:Show()
 		specWarnKineticBomb:Show(self.vb.kineticCount)
 		soundKineticBomb:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\KineticSpawn.mp3")
-		timerKineticBombCD:Start(nil, self.vb.kineticCount+1)
+		if self:IsDifficulty("normal25", "heroic25") then
+			timerKineticBombCD:Start(20.5, self.vb.kineticCount+1)
+		else
+			timerKineticBombCD:Start(nil, self.vb.kineticCount+1) -- Fixed timer: 30.5s
+		end
 		if self.Options.SetIconOnKineticBomb then
 			self:ScanForMobs(38454, 2, self.vb.kineticIcon, 5, nil, 12, "SetIconOnKineticBomb", false, nil, true)
 			self.vb.kineticIcon = self.vb.kineticIcon - 1

@@ -217,7 +217,11 @@ L:SetMiscLocalization({
 	Taldaram			= "Príncipe Taldaram",
 	Valanar				= "Príncipe Valanar",
 	FirstPull			= "Mortales imbéciles. ¿Pensaron que nos derrotarían tan fácilmente? ¡Los San'layn son los soldados inmortales del Rey Exánime! ¡Ahora se enfrentarán a todo su poder combinado!",
-	EmpoweredFlames		= "¡Llamas potenciadas arremeten contra (%S+)!"
+	EmpoweredFlames		= "¡Llamas potenciadas arremeten contra (%S+)!",
+	InvocationOfBlood	= "¡Invocación de orbe de sangre para el (.+)!"
+--	OrbSwitchValanar	= "¡Invocación de orbe de sangre para el príncipe Valanar!", -- 38589
+--	OrbSwitchKeleseth	= "¡Invocación de orbe de sangre para el príncipe Keleseth!", -- 38588
+--	OrbSwitchTaldaram	= "¡Invocación de orbe de sangre para el príncipe Taldaram!" -- 38590
 })
 
 -------------------------------
