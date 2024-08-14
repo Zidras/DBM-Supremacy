@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Sindragosa", "DBM-Icecrown", 4)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240801001225")
+mod:SetRevision("20240814110512")
 mod:SetCreatureID(36853)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6)
 mod:SetHotfixNoticeRev(20230528000000)
@@ -10,7 +10,7 @@ mod:SetMinSyncRevision(20230528000000)
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 69649 71056 71057 71058 73061 73062 73063 73064 71077",
+	"SPELL_CAST_START 69649 71056 71057 71058 73061 73062 73063 73064 71077 70123 71047 71048 71049 69712",
 	"SPELL_CAST_SUCCESS 70117 69762",
 	"SPELL_AURA_APPLIED 70126 69762 70106 69766 70127 72528 72529 72530",
 	"SPELL_AURA_APPLIED_DOSE 70106 69766 70127 72528 72529 72530",
@@ -45,17 +45,17 @@ local specWarnInstability		= mod:NewSpecialWarningStack(69766, nil, mod:IsHeroic
 local specWarnChilledtotheBone	= mod:NewSpecialWarningStack(70106, nil, mod:IsHeroic() and 4 or 8, nil, nil, 1, 6)
 local specWarnBlisteringCold	= mod:NewSpecialWarningRun(70123, nil, nil, nil, 4, 2)
 
-local timerNextAirphase			= mod:NewTimer(65.7, "TimerNextAirphase", 43810, nil, nil, 6) -- (10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02) - 65.7; 65.8 || 65.8; 65.8; 65.8
-local timerNextGroundphase		= mod:NewTimer(44.2, "TimerNextGroundphase", 43810, nil, nil, 6) -- 0.4s variance (10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/06) - 44.2; 44.2 || 44.2; 44.3, 44.6; 44.2 || 45.1
-local timerNextFrostBreath		= mod:NewNextTimer(22, 69649, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
-local timerNextBlisteringCold	= mod:NewCDTimer(66, 70123, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, true, 2) -- Added "keep" arg
-local timerNextBeacon			= mod:NewNextCountTimer(16, 70126, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
+local timerNextAirphase			= mod:NewTimer(110, "TimerNextAirphase", 43810, nil, nil, 6) -- Fixed timer: 110s on each air phase
+local timerNextGroundphase		= mod:NewTimer(42.6, "TimerNextGroundphase", 43810, nil, nil, 6) -- REVIEW! Will have variance due to variable liftoff position. Although I use a different scheduling below, which is closer to the script, timer kept here considering timestamps consists of YELL > UNIT_TARGET [diff] ([2024-07-29]@[20:10:18]) 51.17 > 93.77 [42.6]
+local timerNextFrostBreath		= mod:NewCDTimer(20, 69649, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- 5s variance [20-25]. Added "keep" arg.
+local timerNextBlisteringCold	= mod:NewCDTimer(65, 70123, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, true, 2) -- 5s variance on Phase 3 [65-70]. Added "keep" arg
+local timerNextBeacon			= mod:NewNextCountTimer(18, 70126, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON) -- 4s variance [18-22]
 local timerBeaconIncoming		= mod:NewTargetTimer("d7", 70126, nil, nil, nil, 3) -- One incoming timer for each target
-local timerBlisteringCold		= mod:NewCastTimer(6, 70123, nil, nil, nil, 2)
-local timerUnchainedMagic		= mod:NewCDTimer(32, 69762, nil, nil, nil, 3) -- (25H Lordaeron 2022/07/09 || 10N Icecrown 2022/08/22 || 10N Icecrown 2022/08/25) - 32.0, 63.2, 32.1, 77.8, 32.1, 32.5, 31.9, 34.8 || 35.7, 58.4, 32.1, 77.9, 32.1, 78.6, 32.0, 32.0, 32.1 || 32.0, 62.1, 32.0, Stage 2/68.4, 9.9/78.3, 32.0
+local timerBlisteringCold		= mod:NewCastTimer(6, 70123, nil, nil, nil, 2) -- 1s Icy Grip + 5s Blistering Cold
+local timerUnchainedMagic		= mod:NewCDTimer(30, 69762, nil, nil, nil, 3, nil, nil, true) -- 5s variance [30-35]. Added "keep" arg.
 local timerInstability			= mod:NewBuffFadesTimer(5, 69766, nil, nil, nil, 5)
 local timerChilledtotheBone		= mod:NewBuffFadesTimer(8, 70106, nil, nil, nil, 5)
-local timerTailSmash			= mod:NewCDTimer(27.1, 71077, nil, nil, nil, 2, nil, nil, true) -- ~7s variance [27-34]? Added "keep" arg. (25H Lordaeron 2022/07/09 || 10N Icecrown 2022/08/25 || 25H Lordaeron 2022/10/14) - 28.7; 93.3, 30.6, 83.1, 29.2, 29.6, 29.6, 33.8; 29.2, 65.7, 30.8, 79.1, 27.9, 31.1, 27.9, 27.4; 29.7; 28.9, 64.7, 27.4, 84.3, 32.4, 30.0, 29.2 || 94.0, 31.5, Stage 2/59.0, 19.1/78.0, 31.9 || Stage 1/20.0, 28.9, Stage 1.5/1.1, Stage 1/44.3, 21.5/65.7/66.8, 28.7, Stage 1.5/15.6, Stage 1/45.0, Stage 2/20.0, 2.1/22.1/67.1/82.8, 27.2, 31.6, 29.6, 31.4
+local timerTailSmash			= mod:NewCDTimer(22, 71077, nil, nil, nil, 2, nil, nil, true) -- 5s variance [22-27]. Added "keep" arg.
 
 local soundUnchainedMagic		= mod:NewSoundYou(69762, nil, "SpellCaster")
 
@@ -179,14 +179,39 @@ local function ResetRange(self)
 end
 
 -- Timed, since there is no dedicated event for Sindragosa Landing Phase, and UNIT_TARGET only fires if Sindragosa is targeted or focused (sync'ed below)
-local function landingPhaseWorkaround(self, timeOffset)
+local function landingPhaseWorkaround(self)
 	DBM:Debug("UNIT_TARGET didn't fire. Landing Phase scheduled")
 	self:SetStage(1)
-	timerNextAirphase:Start(-timeOffset)
-	timerUnchainedMagic:Start(10-timeOffset)
-	timerTailSmash:Start(19-timeOffset)
-	timerNextBlisteringCold:Start(34-timeOffset)
 	self:UnregisterShortTermEvents()
+end
+
+local function eventLandGround()
+	DBM:Debug("EVENT_LAND_GROUND")
+	timerTailSmash:Start(19) -- 4s variance [19-23]. Belongs to EVENT_GROUP_LAND_PHASE
+	timerNextFrostBreath:Start(7) -- 3s variance [7-10]. Belongs to EVENT_GROUP_LAND_PHASE
+	timerUnchainedMagic:Start(12) -- 5s variance [12-17]. Belongs to EVENT_GROUP_LAND_PHASE
+	timerNextBlisteringCold:Start(35) -- 5s variance [35-40]. Belongs to EVENT_GROUP_LAND_PHASE
+end
+
+local function checkTimersToDelay(delay) -- REVIEW! Needs refactor
+	-- DBM timers in EVENT_GROUP_LAND_PHASE:
+		-- Frost Breath
+		-- Icy Grip
+		-- Tail Smash
+		-- Unchained Magic
+	-- delays all events in EVENT_GROUP_LAND_PHASE by <delay> seconds if current time plus the specified delay is less than event's scheduled time
+	if timerNextFrostBreath:IsStarted() and timerNextFrostBreath:GetRemaining() < delay then
+		timerNextFrostBreath:AddTime(delay)
+	end
+	if timerNextBlisteringCold:IsStarted() and timerNextBlisteringCold:GetRemaining() < delay then
+		timerNextBlisteringCold:AddTime(delay)
+	end
+	if timerTailSmash:IsStarted() and timerTailSmash:GetRemaining() < delay then
+		timerTailSmash:AddTime(delay)
+	end
+	if timerUnchainedMagic:IsStarted() and timerUnchainedMagic:GetRemaining() < delay then
+		timerUnchainedMagic:AddTime(delay)
+	end
 end
 
 function mod:AnnounceBeaconIcons(uId, icon)
@@ -198,10 +223,11 @@ end
 function mod:OnCombatStart(delay)
 	self:SetStage(1)
 	berserkTimer:Start(-delay)
-	timerNextAirphase:Start(50-delay)
-	timerNextBlisteringCold:Start(31.6-delay) -- ~10s variance [31.6-40] (10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02) - 37.5; 34.9 || 31.6; 36.4; 34.9; 34.9
-	timerTailSmash:Start(20-delay) -- (25H Lordaeron 2022/07/09 || 10N Icecrown 2022/08/22 || 10N Icecrown 2022/08/25 || 10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02) - 20.0 || 20.0 || 20.0 || 20.0; 20.0 || 20.0; 19.9; 20.0; 20.0
-	timerUnchainedMagic:Start(10-delay) -- (25H Lordaeron 2022/07/09 || 10N Icecrown 2022/08/22 || 10N Icecrown 2022/08/25) - 10.1 || 10.1 || 10.0
+	timerNextAirphase:Start(50-delay) -- Fixed timer: 50s
+	timerNextFrostBreath:Start(8-delay) -- 4s variance [8-12]. Belongs to EVENT_GROUP_LAND_PHASE
+	timerNextBlisteringCold:Start(33.5-delay) -- Fixed timer: 33.5s. Belongs to EVENT_GROUP_LAND_PHASE
+	timerTailSmash:Start(20-delay) -- Fixed timer: 20s. Belongs to EVENT_GROUP_LAND_PHASE
+	timerUnchainedMagic:Start(9) -- 5s variance [9-14]. Belongs to EVENT_GROUP_LAND_PHASE
 	self.vb.warned_P2 = false
 	self.vb.warnedfailed = false
 	table.wipe(beaconTargets)
@@ -219,11 +245,25 @@ function mod:OnCombatEnd()
 end
 
 function mod:SPELL_CAST_START(args)
+	local spellId = args.spellId
 	if args:IsSpellID(69649, 71056, 71057, 71058) or args:IsSpellID(73061, 73062, 73063, 73064) then--Frost Breath
 		warnFrostBreath:Show()
-		timerNextFrostBreath:Start()
-	elseif args.spellId == 71077 then
-		timerTailSmash:Start()
+		timerNextFrostBreath:Start() -- Belongs to EVENT_GROUP_LAND_PHASE
+		-- delays all events in EVENT_GROUP_LAND_PHASE by 1 millisecond if current time plus the specified delay is less than event's scheduled time
+		checkTimersToDelay(0.001)
+		elseif spellId == 71077 then
+		timerTailSmash:Start() -- Belongs to EVENT_GROUP_LAND_PHASE
+		-- delays all events in EVENT_GROUP_LAND_PHASE by 1 millisecond if current time plus the specified delay is less than event's scheduled time
+		checkTimersToDelay(0.001)
+	elseif args:IsSpellID(70123, 71047, 71048, 71049) and self.vb.phase == 2 then -- Blistering Cold (last phase Icy Grip)
+		timerNextBlisteringCold:Start()
+	elseif spellId == 69712 then -- Ice Tomb (cast start on air phase)
+		-- Schedules EVENT_FROST_BOMB in 7s (plus 6s on each Frost Bomb, up to 4)
+		-- 7s (initial schedule) + 6s (1st Frost Bomb) + 6s (2nd Frost Bomb) + 6s (3rd Frost Bomb) + 5.5s (4th Frost Bomb, schedules EVENT_LAND)
+		-- On EVENT_LAND, Sindra starts flying down to POINT_LAND, and schedules EVENT_LAND_GROUND once it reaches this point (REVIEW! visually timed it at 5.6s)
+		timerNextGroundphase:Start(36.1)
+		warnGroundphaseSoon:Schedule(31.1)
+		self:Schedule(36.3, eventLandGround) -- giving a 0.2s cushion from ground timer
 	end
 end
 
@@ -233,14 +273,20 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnBlisteringCold:Show()
 		specWarnBlisteringCold:Play("runout")
 		timerBlisteringCold:Start()
-		timerNextBlisteringCold:Start()
+		timerNextBlisteringCold:Cancel() -- no point in having the timer tick on phase 1 due to the keep arg
+		-- delays all events in EVENT_GROUP_LAND_PHASE by 1 second if current time plus the specified delay is less than event's scheduled time
+		checkTimersToDelay(1.001)
+		--
+		if timerNextBeacon:IsStarted() and timerNextBeacon:GetRemaining() < 7 then -- if EVENT_ICE_TOMB is scheduled to occur within the next 7 seconds, Reschedule occurs
+			timerNextBeacon:Restart(7)
+		end
 
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:SetBossRange(25, self:GetBossUnitByCreatureId(36853))
 			self:Schedule(5.5, ResetRange, self)
 		end
 	elseif spellId == 69762 then	-- Unchained Magic
-		timerUnchainedMagic:Start()
+		timerUnchainedMagic:Start() -- Belongs to EVENT_GROUP_LAND_PHASE
 	end
 end
 
@@ -266,7 +312,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if self.vb.phase == 2 then--Phase 2 there is only one icon/beacon, don't use sorting method if we don't have to.
 			self.vb.beaconP2Count = self.vb.beaconP2Count + 1
-			timerNextBeacon:Start(16, self.vb.beaconP2Count)
+			timerNextBeacon:Start(nil, self.vb.beaconP2Count)
+			if timerNextBlisteringCold:IsStarted() and timerNextBlisteringCold:GetRemaining() < 8 then -- if EVENT_ICY_GRIP is scheduled to occur within the next 8 seconds, Reschedule occurs
+				timerNextBlisteringCold:Restart(8) -- Belongs to EVENT_GROUP_LAND_PHASE
+			end
 			if self.Options.SetIconOnFrostBeacon then
 				self:SetIcon(args.destName, 8)
 				if self.Options.AnnounceFrostBeaconIcons and DBM:IsInGroup() and DBM:GetRaidRank() > 1 then
@@ -404,9 +453,10 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		timerUnchainedMagic:Cancel()
 		timerNextBlisteringCold:Cancel()
 		timerTailSmash:Cancel()
-		timerNextGroundphase:Start()
-		warnGroundphaseSoon:Schedule(37.5)
-		self:Schedule(45.2, landingPhaseWorkaround, self, 1) -- giving a 0.2s cushion from 45s (max I have on logs is 45.1s). 1s comes from 45.2-44.2s from ground timer
+--		timerNextGroundphase:Start()
+--		warnGroundphaseSoon:Schedule(37.6)
+		timerNextAirphase:Schedule(42.6, 67.4) -- Even though the timer was placed on Sindra Landing to not clutter air phase with irrelevant timers, to be absolutely accurate and synced with the script I have reverted back to Air Phase start. Tried to keep the same behaviour by scheduling it around Landing timer (110 - 42.6 = 67.4)
+		self:Schedule(42.8, landingPhaseWorkaround, self) -- giving a 0.2s cushion from 42.6s ([2024-07-29]@[20:10:18] - 42.6s)
 		self:RegisterShortTermEvents(
 			"UNIT_TARGET"
 		)
@@ -414,11 +464,11 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		self:SetStage(2)
 		warnPhase2:Show()
 		warnPhase2:Play("ptwo")
-		timerNextBeacon:Start(7, 1) -- no need to use self.vb.beaconP2Count here since it will always be one on this timer
+		timerNextBeacon:Start(7, 1) -- 3s variance [7-10]. No need to use self.vb.beaconP2Count here since it will always be one on this timer
 		timerNextAirphase:Cancel()
 		timerNextGroundphase:Cancel()
 		warnGroundphaseSoon:Cancel()
-		timerNextBlisteringCold:Restart(35) -- REVIEW! Stage 1 to Stage 2 needs logic! (10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02) - Stage 1/44.2, Stage 2/24.6, 50.9 || 42.7; Stage 1/44.6, 22.6/67.2/79.9, Stage 2/3.2, 24.2 ; 39.5
+		timerNextBlisteringCold:Restart(35) -- 5s variance [35-40]. Belongs to EVENT_GROUP_LAND_PHASE
 		self:Unschedule(landingPhaseWorkaround)
 		self:UnregisterShortTermEvents() -- REVIEW! not sure it's needed, but doesn't hurt. Would need validation on event order when boss is intermissioned with health right above phase 2 threshold, to check which of the events come first (TARGET or YELL)
 	end
@@ -429,10 +479,6 @@ function mod:OnSync(msg)
 	if msg == "SindragosaLanded" then
 		self:Unschedule(landingPhaseWorkaround)
 		self:SetStage(1)
-		timerNextAirphase:Start()
-		timerUnchainedMagic:Start(10) -- (10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02) - 10.0; 10.0 || 10.0; 10.0, 10.0; 10.0
-		timerTailSmash:Start(19) -- ~5s variance [19-23.8]? (10N Icecrown 2022/08/25 || 10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02) - 19.0 || 21.4; 21.9 || 21.4; 23.8, 22.6; 22.2
-		timerNextBlisteringCold:Start(34) -- 6s variance [34-40]? (10H Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/02) - 34.0; 34.0 || 34.0; 34.0; 34.0
 		self:UnregisterShortTermEvents()
 	end
 end
