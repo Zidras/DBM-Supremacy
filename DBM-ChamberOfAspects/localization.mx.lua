@@ -1,4 +1,4 @@
-﻿if GetLocale() ~= "esES" then return end
+﻿if GetLocale() ~= "esMX" then return end
 
 local L
 
@@ -15,8 +15,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetMiscLocalization({
-	YellShadronPull	= "¡No temo a nada! ¡Y menos a vosotros!", -- esES
---	YellShadronPull	= "¡A nada le temo! ¡Y menos a ti!", -- esMX
+	YellShadronPull	= "¡A nada le temo! ¡Y menos a ti!", -- esMX
 })
 
 --------------
@@ -29,8 +28,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetMiscLocalization({
-	YellTenebronPull	= "¡No tenéis cabida aquí! ¡Vuestro lugar está... entre... los fallecidos!", -- esES
---	YellTenebronPull	= "¡No tienes cabida aquí! ¡Sino entre... los difuntos!", -- esMX
+	YellTenebronPull	= "¡No tienes cabida aquí! ¡Sino entre... los difuntos!", -- esMX
 })
 
 --------------
@@ -43,8 +41,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetMiscLocalization({
-	YellVesperonPull	= "¡No suponéis una amenaza, seres inferiores! ¡A ver qué valéis!", -- esES
---	YellVesperonPull	= "¡No representan ninguna amenaza, seres inferiores! ¡Demuestren su poderío!", -- esMX
+	YellVesperonPull	= "¡No representan ninguna amenaza, seres inferiores! ¡Demuestren su poderío!", -- esMX
 })
 
 ----------------
@@ -101,8 +98,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	YellSarthPull	= "Mi tarea es cuidar de estos huevos. ¡Arderéis antes de hacerles el más mínimo daño!", -- esES
---	YellSarthPull	= "Mi tarea es cuidar de estos huevos. ¡Te carbonizaré antes que le causes algún daño!", -- esMX
+	YellSarthPull	= "Mi tarea es cuidar de estos huevos. ¡Te carbonizaré antes que le causes algún daño!", -- esMX
 	Wall			= "¡La lava se arremolina alrededor de %s!",
 	Portal			= "%s comienza a abrir un Portal Crepuscular",
 	NameTenebron	= "Tenebron",
@@ -170,7 +166,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	SummonMinions	= "¡Reducidlos a cenizas, esbirros!"
+	SummonMinions	= "¡Háganlos cenizas, esbirros!"
 })
 
 ------------
@@ -195,9 +191,9 @@ L:SetOptionLocalization({
 L:SetMiscLocalization({
 	Halion					= "Halion",
 	PhysicalRealm			= "Reino físico",
-	MeteorCast				= "¡Los cielos arden!",
-	Phase2					= "En el reino del crepúsculo solo encontraréis sufrimiento. ¡Entrad si os atrevéis!",
-	Phase3					= "¡Yo soy la luz y la oscuridad! ¡Temed, mortales, la llegada de Alamuerte!",
-	twilightcutter			= "¡Temed la sombra!", -- ¡Las esferas que orbitan emiten energía oscura!", -- Can't use this since on Warmane it triggers twice, 5s prior and on cutter.
-	Kill					= "Disfrutad la victoria, mortales, porque será la última. ¡Este mundo arderá cuando vuelva el maestro!"
+	MeteorCast				= "¡Arden los cielos!",
+	Phase2					= "¡Sólo encontrarán sufrimiento en el reino del crepúsculo! ¡Entren, si se atreven!",
+	Phase3					= "¡Soy la luz y la oscuridad! ¡Tiembles, mortales, ante el heraldo de Alamuerte!",
+	twilightcutter			= "¡Cuidado con la sombra!", -- ¡Las esferas que orbitan emiten energía oscura!", -- Can't use this since on Warmane it triggers twice, 5s prior and on cutter.
+	Kill					= "Aprecien esta victoria, mortales, pues será la última que tengan. ¡Este mundo arderá cuando regrese el amo!"
 })

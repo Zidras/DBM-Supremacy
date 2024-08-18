@@ -53,6 +53,7 @@ localization.kr.lua
 localization.fr.lua
 localization.es.lua
 localization.cn.lua
+localization.mx.lua
 
 Obsidian\Shadron.lua
 Obsidian\Tenebron.lua

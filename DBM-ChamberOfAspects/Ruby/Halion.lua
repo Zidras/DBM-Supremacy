@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Halion", "DBM-ChamberOfAspects", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20230823000630")
+mod:SetRevision("20240819001615")
 mod:SetCreatureID(39863)--40142 (twilight form)
 mod:SetUsedIcons(7, 3)
 mod:SetMinSyncRevision(4358) -- try to preserve this as much as possible to receive old DBM comms
@@ -38,11 +38,11 @@ local specWarnFieryCombustion		= mod:NewSpecialWarningRun(74562, nil, nil, nil, 
 local yellFieryCombustion			= mod:NewYellMe(74562)
 local specWarnMeteorStrike			= mod:NewSpecialWarningMove(74648, nil, nil, nil, 1, 2)
 
-local timerFieryCombustionCD		= mod:NewNextTimer(25, 74562, nil, nil, nil, 3) -- (25H Lordaeron 2022/10/09) - Stage 1/16.4, 25.6, 25.1, 25.1, Stage 2/0.2, Stage 3/104.2, 18.5/122.7/122.9, 25.1, 25.0, 26.0, 25.0, 25.0, 25.1, 25.0, 25.0", -- [2]
-local timerMeteorCD					= mod:NewNextTimer(40, 74648, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)--Target or aoe? tough call. It's a targeted aoe! Even though on pull has variance, can't implement "keep" due to OnSync phasing, unless I sync schedule and end timer flag but that's a bit overkill
+local timerFieryCombustionCD		= mod:NewNextTimer(25, 74562, nil, nil, nil, 3) -- Fixed timer: 25s
+local timerMeteorCD					= mod:NewNextTimer(40, 74648, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON) -- Target or aoe? tough call. It's a targeted aoe! Fixed timer (after first): 40s. Even though on pull has variance, can't implement "keep" due to OnSync phasing, unless I sync schedule and end timer flag but that's a bit overkill
 local timerMeteorCast				= mod:NewCastTimer(7, 74648)--7-8 seconds from boss yell the meteor impacts.
-local timerFieryBreathCD			= mod:NewCDTimer(13, 74525, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- REVIEW! ~4s variance [13.1-16.9]. Added "keep" arg (25H Lordaeron 2022/09/21 wipe2 || 25H Lordaeron 2022/09/23) - 16.1, 13.1, 13.8, 14.9, 14.6, 16.3, Stage 2/2.0, Stage 3/109.9, 17.4/127.3/129.3, 16.4 || 15.7, 15.7, 16.9, 16.7, 15.1, Stage 2/9.3, Stage 3/93.0, 13.0/106.0/115.4, 14.2, 14.5, 13.5, 13.8, 15.7, 15.0, 15.9, 16.0, 13.4, 15.0, 16.2, 16.8, 16.2
-local timerTailLashCD				= mod:NewCDTimer(10, 74531, nil, nil, nil, 2) -- Almost a fixed timer, with very occasional delay, on both Physical and Shadow realms. (25H Lordaeron 2022/09/23) - pull:10.1/Stage 1/10.1, 10.0, 10.0, 10.0, 10.1, 10.5, 10.0, 10.1, 11.7, Stage 2/13.5, 10.1, 10.0, 10.0, 10.1, 10.0, 10.0, 10.0, Stage 3/10.0, 10.0, 11.2, 10.0, 10.0, 10.0, 10.1, 10.1, 10.0, 10.0, 10.0, 10.0, 10.0, 10.1, 10.0, 10.0, 10.0, 11.0, 10.0
+local timerFieryBreathCD			= mod:NewCDTimer(10, 74525, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- 2s variance [10-12]. Added "keep" arg.
+local timerTailLashCD				= mod:NewNextTimer(10, 74531, nil, nil, nil, 2) -- Fixed timer: 10s
 
 mod:AddSetIconOption("SetIconOnFireConsumption", 74562, true, false, {7})--Red x for Fire
 
@@ -59,12 +59,12 @@ local specWarnSoulConsumption		= mod:NewSpecialWarningRun(74792, nil, nil, nil, 
 local yellSoulConsumption			= mod:NewYellMe(74792)
 local specWarnTwilightCutter		= mod:NewSpecialWarningSpell(74769, nil, nil, nil, 3, 2)
 
-local timerSoulConsumptionCD		= mod:NewNextTimer(20, 74792, nil, nil, nil, 3) -- (25N Lordaeron 2022/09/20) - Stage 2/22.9, 20.0, 20.0, Stage 3/10.4, 9.6/20.0, 20.0, 60.0, 20.0
+local timerSoulConsumptionCD		= mod:NewNextTimer(20, 74792, nil, nil, nil, 3) -- Fixed timer: 20s
 local timerTwilightCutterCast		= mod:NewCastTimer(5, 74769, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerTwilightCutter			= mod:NewBuffActiveTimer(10, 74769, nil, nil, nil, 6)
-local timerTwilightCutterCD			= mod:NewNextTimer(15, 74769, nil, nil, nil, 6)
-local timerTwilightCutterSpawn		= mod:NewTimer(20, "TimerCutterSpawn", 74769, false, nil, 6, nil, nil, nil, nil, nil, nil, nil, 74769) -- Combines CD + Cast, and disables them too
-local timerShadowBreathCD			= mod:NewCDTimer(13, 74806, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- REVIEW! ~4s variance [13.0-16.9]. Added "keep" arg (25H Lordaeron 2022/09/21 wipe2 || 25H Lordaeron 2022/09/23) -- 14.0, 15.9, 13.8, 14.9, 14.3, 13.0 || 15.8, 13.7, 16.9, 15.3
+local timerTwilightCutterCD			= mod:NewNextTimer(29, 74769, nil, nil, nil, 6) -- Fixed timer: 29s
+local timerTwilightCutterSpawn		= mod:NewTimer(34, "TimerCutterSpawn", 74769, false, nil, 6, nil, nil, nil, nil, nil, nil, nil, 74769) -- Combines CD + Cast, and disables them too
+local timerShadowBreathCD			= mod:NewCDTimer(10, 74806, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true) -- 2s variance [10-12]. Added "keep" arg.
 
 mod:AddSetIconOption("SetIconOnShadowConsumption", 74792, true, false, {3})--Purple diamond for shadow
 
@@ -83,6 +83,7 @@ local fieryBreathCLEU = false -- Assigning a bool for CLEU check to prevent doub
 local soulConsumptionCLEU = false -- Assigning a bool for CLEU check to prevent double timer starts from CLEU & Sync
 local shadowBreathCLEU = false -- Assigning a bool for CLEU check to prevent double timer starts from CLEU & Sync
 local previousCorporeality = 0
+local boss2Engaged = false
 
 local function clearKeepTimers(self) -- Attempt to clear "keep" negative timers that are not relevant to the realm and would otherwise tick to infinity
 --	if not self.AnnounceAlternatePhase then return end
@@ -100,10 +101,11 @@ function mod:OnCombatStart(delay)
 	soulConsumptionCLEU = false
 	shadowBreathCLEU = false
 	previousCorporeality = 0
+	boss2Engaged = false
 	berserkTimer:Start(-delay)
-	timerMeteorCD:Start(20-delay) -- REVIEW! ~5s variance (25N Lordaeron 2022/09/20 || 25H Lordaeron 2022/10/09) - 20.7 || 24.5
-	timerFieryCombustionCD:Start(15-delay) -- (25N Lordaeron 2022/09/20 || 25H Lordaeron 2022/10/09) - 17.6 || 16.4
-	timerFieryBreathCD:Start(10-delay) -- (25H Lordaeron 2022/09/21 wipe1 || 25H Lordaeron 2022/09/21 wipe2 || 25H Lordaeron 2022/09/21 wipe3 || 25H Lordaeron 2022/09/23) - 10.5 || 11.3 || 12.4 || 10.3
+	timerMeteorCD:Start(20-delay) -- 5s variance [20-25]
+	timerFieryCombustionCD:Start(15-delay) -- 3s variance [15-18]
+	timerFieryBreathCD:Start(10-delay) -- 5s variance [10-15]
 	timerTailLashCD:Start(-delay)
 end
 
@@ -296,6 +298,23 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	end
 end
 
+function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
+	if not boss2Engaged and UnitExists("boss2") and self:GetUnitCreatureId("boss2") then
+		-- EVENT_SEND_ENCOUNTER_UNIT
+		boss2Engaged = true -- Not sure how many times IEEU fires here, but doesn't hurt to protect this with a logic failsafe
+		-- 2 seconds had passed since JustEngagedWith fired internally
+		timerTailLashCD:Start(8) -- Fixed timer: 10s (-2)
+		timerShadowBreathCD:Start(8) -- 5s variance [10-15] (-2)
+		timerSoulConsumptionCD:Start(18) -- Fixed timer: 20s (-2)
+		if self.Options.TimerCutterSpawn then
+			timerTwilightCutterSpawn:Start(19)
+		else
+			timerTwilightCutterCD:Start(14) -- Fixed timer: 16s (-2)
+		end
+
+	end
+end
+
 function mod:OnSync(msg, target)
 	if msg == "TwilightCutter" then
 		if self.Options.AnnounceAlternatePhase then -- 2022/10/14: Removed antispam workaround since this has been fixed serverside! (~~Edited to circumvent Warmane double cutter boss emote~~)
@@ -352,20 +371,24 @@ function mod:OnSync(msg, target)
 		timerFieryCombustionCD:Cancel()
 		warnPhase2:Show()
 		warnPhase2:Play("ptwo")
-		timerShadowBreathCD:Start() -- ~5s variance [13.7-18.4] (25H Lordaeron 2022/09/21 wipe1 || 25H Lordaeron 2022/09/21 wipe2 || 25H Lordaeron 2022/09/21 wipe3 || 25H Lordaeron 2022/09/23) - 15.9 || 13.7 || 18.1 || 18.4
-		timerSoulConsumptionCD:Start(22.8)--Edited. not exact, 15 seconds from tank aggro, but easier to add 5 seconds to it as a estimate timer than trying to detect this. (25N Lordaeron 2022/10/09 || 25H Lordaeron 2022/10/15 || 25H Lordaeron 2022/10/30) - 23.8 || 23.4 || 22.8
-		if self.Options.TimerCutterSpawn then
-			timerTwilightCutterSpawn:Start(35)
-		else
-			timerTwilightCutterCD:Start(30) -- (25N Lordaeron 2022/09/20 || 25H Lordaeron 2022/09/21) - Stage 2/30.0 || Stage 2/30.0
-		end
+--		timerShadowBreathCD:Start() -- ~5s variance [13.7-18.4] (25H Lordaeron 2022/09/21 wipe1 || 25H Lordaeron 2022/09/21 wipe2 || 25H Lordaeron 2022/09/21 wipe3 || 25H Lordaeron 2022/09/23) - 15.9 || 13.7 || 18.1 || 18.4
+--		timerSoulConsumptionCD:Start(22.8)--Edited. not exact, 15 seconds from tank aggro, but easier to add 5 seconds to it as a estimate timer than trying to detect this. (25N Lordaeron 2022/10/09 || 25H Lordaeron 2022/10/15 || 25H Lordaeron 2022/10/30) - 23.8 || 23.4 || 22.8
+--		if self.Options.TimerCutterSpawn then
+--			timerTwilightCutterSpawn:Start(35)
+--		else
+--			timerTwilightCutterCD:Start(30) -- (25N Lordaeron 2022/09/20 || 25H Lordaeron 2022/09/21) - Stage 2/30.0 || Stage 2/30.0
+--		end
 		self:Schedule(20, clearKeepTimers, self)
+		self:RegisterShortTermEvents(
+			"INSTANCE_ENCOUNTER_ENGAGE_UNIT" -- EVENT_SEND_ENCOUNTER_UNIT. Fixed timer: 2s
+		)
+		-- Delays all events by 10s (but could not find a reason for this, since twilight realm is a different class, so do nothing for now. Maybe impacts phase 3?)
 	elseif msg == "Phase3" and self.vb.phase < 3 then
 		self:SetStage(3)
 		warnPhase3:Show()
 		warnPhase3:Play("pthree")
-		timerMeteorCD:Start(23.2) --These i'm not sure if they start regardless of drake aggro, or if it varies as well. (25H Lordaeron 2022/10/09 || 25H Lordaeron 2022/10/30) - Stage 3/25.8 || 23.2
-		timerFieryCombustionCD:Start(17.8) -- REVIEW! source of variance? (25N Lordaeron 2022/10/09 || 25H Lordaeron 2022/10/15 || 25N Lordaeron [2023-06-27]@[19:37:57]) - 18.5 || 19.4 || 17.8
+		timerMeteorCD:Start(23.2) --REVIEW! These i'm not sure if they start regardless of drake aggro, or if it varies as well.
+		timerFieryCombustionCD:Start(17.8) -- REVIEW! source of variance?
 		self:Schedule(20, clearKeepTimers, self)
 	elseif msg == "Phase3soon" and not self.vb.warned_preP3 then
 		self.vb.warned_preP3 = true
