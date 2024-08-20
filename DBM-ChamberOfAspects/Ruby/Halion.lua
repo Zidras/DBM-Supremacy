@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("Halion", "DBM-ChamberOfAspects", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20240819001615")
+mod:SetRevision("20240820085055")
 mod:SetCreatureID(39863)--40142 (twilight form)
 mod:SetUsedIcons(7, 3)
 mod:SetMinSyncRevision(4358) -- try to preserve this as much as possible to receive old DBM comms
@@ -113,6 +113,7 @@ function mod:OnCombatEnd()
 	if self.Options.HealthFrame then
 		DBM.BossHealth:Hide()
 	end
+	self:UnregisterShortTermEvents()
 end
 
 function mod:SPELL_CAST_START(args)
@@ -311,7 +312,7 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 		else
 			timerTwilightCutterCD:Start(14) -- Fixed timer: 16s (-2)
 		end
-
+		self:UnregisterShortTermEvents()
 	end
 end
 
